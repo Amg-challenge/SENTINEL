@@ -33,6 +33,8 @@ Senza installare nulla: dal repo su GitHub, **Code → Codespaces → Create cod
 | `notebooks/calibrazione.ipynb` | Calibrazione su fonti pubbliche, ROC, sensibilità | Utente 1 | `modello` |
 | `app.py` | Demo Streamlit: flusso, sotto il cofano, confronto | Utente 3 | `interfaccia` |
 | `pitch/` | Deck e documenti (o link alla cartella condivisa) | Utente 4 | — |
+| `scripts/simula_portafoglio.py` | Simula centinaia di clienti: alert, quota banca, cost to serve, sensibilità | Utente 2 | `dati-economia` |
+| `risultati/` | Report e tabelle generate dalla simulazione | Utente 2 | `dati-economia` |
 | `tests/test_contratti.py` | Controlla che le firme non cambino | tutti | — |
 
 ## I contratti (firme da non cambiare senza accordo)
@@ -45,7 +47,11 @@ punteggia(df, base) -> DataFrame            # aggiunge 'punteggio' e 'motivi'
 instrada(operazione, contatto) -> (destinazione, motivo)   # "contatto" | "banca"
 curva_costo(df, costo_falso_allarme=5.0, soglie=None) -> DataFrame
 perdita_attesa_evitata(df, soglia) -> float
-stima_alert(df, soglia, ...) -> dict        # alert/anno, quote contatto/banca, cost to serve
+stima_alert(df, soglia, ...) -> dict        # PER CLIENTE: alert/anno, quote contatto/banca, cost to serve
+genera_portafoglio(n_clienti=300, mix=None, prob_frode=0.01, ...) -> DataFrame
+punteggia_portafoglio(portafoglio) -> DataFrame
+riepilogo_portafoglio(scored, soglia=None, ...) -> dict
+applica_soglia_contanti(scored, soglia_chf) -> DataFrame
 ```
 
 ## Come lavoriamo
@@ -58,9 +64,19 @@ stima_alert(df, soglia, ...) -> dict        # alert/anno, quote contatto/banca, 
 ## Prossimi passi per ciascuno
 
 - **Utente 1:** calibrare pesi e soglia nel notebook su un portafoglio di molti clienti; curva ROC; sensibilità.
-- **Utente 2:** simulare un portafoglio (centinaia di clienti) e verificare le ipotesi del pitch: ~1,5 alert/anno, ~80% risolti dal contatto, cost to serve ~CHF 7. Oggi `stima_alert` gira su un solo cliente.
+- **Utente 2:** fatto il primo giro: `python scripts/simula_portafoglio.py` (circa 2 minuti) produce `risultati/simulazione_portafoglio.md`. Prossimi passi: calibrare con Utente 1 le ipotesi (prevalenza delle frodi, prelievi straordinari legittimi, quota di procure, risposta dei contatti) e passare i numeri a Utente 4.
 - **Utente 3:** rifinire grafica e testi della demo; schermata di attivazione più ricca; deploy su Streamlit Community Cloud; video di backup.
 - **Utente 4:** deck in 11 slide; agganciare il cost to serve ai risultati di Utente 2.
+
+## Risultati della simulazione (scenario base, 600 clienti)
+
+| | Simulazione | Ipotesi del pitch v6 |
+|---|---|---|
+| Alert per cliente all'anno | ~2,2 | ~1,5 |
+| Passati alla banca | ~29% | ~20% |
+| Cost to serve | ~CHF 11 | CHF 7 |
+
+Il dettaglio e l'analisi di sensibilità sono in `risultati/simulazione_portafoglio.md`. Con una soglia contanti concordata di CHF 5'000 il cost to serve scende a ~CHF 5, ma l'importo protetto passa dal ~100% al ~94%.
 
 ## Calendario
 

@@ -3,12 +3,14 @@
 Eseguire con:  python -m pytest -q   (oppure: python tests/test_contratti.py)
 """
 import os, sys
+import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sentinel.profiles import PROFILI, COLONNE, genera_storico, inietta_frode
+from sentinel.profiles import PROFILI, COLONNE, genera_storico, inietta_frode, genera_portafoglio
 from sentinel.model import adatta_baseline, punteggia
 from sentinel.workflow import instrada, richiesta_revoca
-from sentinel.economics import curva_costo, soglia_ottimale, perdita_attesa_evitata, stima_alert
+from sentinel.economics import (curva_costo, soglia_ottimale, perdita_attesa_evitata, stima_alert,
+                                punteggia_portafoglio, riepilogo_portafoglio, applica_soglia_contanti)
 
 
 def _dati(profilo):
@@ -52,6 +54,30 @@ def test_stima_alert_restituisce_le_chiavi_del_pitch():
                         "casi_banca_per_cliente_anno", "cost_to_serve"}
     assert 0 <= out["quota_banca"] <= 1
     assert perdita_attesa_evitata(df, 0) > 0
+
+
+def test_portafoglio_colonne_e_periodi():
+    port = genera_portafoglio(n_clienti=12, prob_frode=0.5, seed=3)
+    assert set(COLONNE) | {"cliente", "profilo", "periodo", "contatto_procura"} == set(port.columns)
+    assert port["cliente"].nunique() == 12
+    assert set(port["periodo"]) == {"storico", "valutazione"}
+    # le frodi cadono sempre nell'anno di valutazione
+    assert (port.loc[port["frode"], "periodo"] == "valutazione").all()
+
+
+def test_stima_alert_e_per_cliente():
+    sc = punteggia_portafoglio(genera_portafoglio(n_clienti=12, prob_frode=0.0, seed=3))
+    doppio = pd.concat([sc, sc.assign(cliente=sc["cliente"] + 100)], ignore_index=True)
+    # raddoppiare i clienti non deve cambiare gli alert PER CLIENTE
+    assert stima_alert(sc, 6)["alert_per_cliente_anno"] == stima_alert(doppio, 6)["alert_per_cliente_anno"]
+    r = riepilogo_portafoglio(sc, soglia=6)
+    assert r["clienti"] == 12 and 0 <= r["quota_banca"] <= 1
+
+
+def test_soglia_contanti_riduce_gli_alert():
+    sc = punteggia_portafoglio(genera_portafoglio(n_clienti=12, prob_frode=0.0, seed=3))
+    meno = applica_soglia_contanti(sc, 5_000)
+    assert (meno["punteggio"] >= 6).sum() <= (sc["punteggio"] >= 6).sum()
 
 
 if __name__ == "__main__":
