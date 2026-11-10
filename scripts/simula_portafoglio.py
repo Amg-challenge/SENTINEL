@@ -1,24 +1,26 @@
-"""Simulazione di un portafoglio di clienti: alert, quota alla banca, cost to serve.
+"""Portfolio simulation: alerts, contact/bank split, cost to serve, fraud protected,
+and the effect on the unit economics of the pitch (document v6, page 3).
 
-Responsabile: Utente 2 · branch `dati-economia`.
+Owner: Utente 2 · branch `dati-economia`.
 
-Uso (dalla cartella del repo):
-    python scripts/simula_portafoglio.py               # 600 clienti per scenario
-    python scripts/simula_portafoglio.py --clienti 1500 --seed 7
+Usage (from the repo folder):
+    python scripts/simula_portafoglio.py                 # 500 customers per run
+    python scripts/simula_portafoglio.py --clienti 1000 --seed 7
 
-Scrive:
-    risultati/simulazione_portafoglio.md   report leggibile (da portare nel pitch)
-    risultati/sensibilita.csv              tabella completa
+Writes:
+    results/simulation_report.md   readable report (numbers for the pitch)
+    results/sensitivity.csv        full table
 
-Metodo, in breve
-- Ogni cliente ha 2 anni di storico: il primo anno serve a imparare le abitudini, sul
-  secondo si contano gli alert.
-- Le frodi sono sovra-campionate (10% dei clienti) per avere abbastanza casi da misurare
-  il tasso di intercettazione. Alert e costi vengono poi ricalcolati alla prevalenza
-  realistica (1% di clienti frodati all'anno, ipotesi da calibrare): gli alert sui clienti
-  legittimi non dipendono dalla prevalenza, quelli sulle frodi sì.
-- Ogni alert viene instradato con workflow.instrada (conflitto d'interesse -> banca);
-  una quota dei contatti non risponde in tempo e il caso passa alla banca.
+Method
+- Each customer has two years: year 1 teaches the engine their habits, alerts are
+  counted on year 2.
+- Operational load (alerts, contact/bank split, cost to serve) is measured on a book
+  at the REAL fraud prevalence (1% of customers per year, assumption to calibrate).
+- Detection is measured on a separate book where frauds are oversampled (30%), so
+  there are enough episodes to count; the threshold is calibrated on that book with
+  frauds re-weighted to the real prevalence.
+- Every paused operation is routed with workflow.destinazione_finale: conflict of
+  interest -> bank; contact who does not answer within 30 minutes -> bank.
 """
 from __future__ import annotations
 
@@ -29,172 +31,167 @@ from datetime import date
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from sentinel.economics import applica_soglia_contanti, punteggia_portafoglio  # noqa: E402
-from sentinel.profiles import _EVENTI_LEGITTIMI, genera_portafoglio  # noqa: E402
-from sentinel.workflow import instrada  # noqa: E402
+from sentinel import economics, profiles  # noqa: E402
 
-PREVALENZA_REALE = 0.01      # clienti frodati all'anno (ipotesi)
-PREVALENZA_SIM = 0.10        # sovra-campionamento per misurare l'intercettazione
-COSTO_FALSO_ALLARME = 5.0    # CHF: disturbo al contatto per un alert legittimo
-BASE = dict(soglia_contanti=None, quota_non_risponde=0.15, costo_caso_banca=15.0,
-            costo_infrastruttura=2.0, eventi_legittimi=None, prob_contatto_con_procura=0.5)
+PREVALENZA_REALE = 0.01
+PREVALENZA_SIM = 0.30   # oversampled: more episodes -> more stable threshold
 
 
-def _quota_conflitti(alert: pd.DataFrame) -> float:
-    if len(alert) == 0:
-        return 0.0
-    dest = [instrada({"avviato_da": r.avviato_da, "beneficiario": r.beneficiario},
-                     {"nome": "contatto", "ha_procura": bool(r.contatto_procura),
-                      "cointestatario": False})[0] for r in alert.itertuples()]
-    return dest.count("banca") / len(dest)
+def _book(clienti, seed, prob_frode, **kw):
+    return economics.punteggia_portafoglio(
+        profiles.genera_portafoglio(n_clienti=clienti, prob_frode=prob_frode, seed=seed, **kw))
 
 
-def soglia_ottimale_pesata(scored: pd.DataFrame) -> float:
-    """Soglia di costo minimo alla prevalenza REALE (le frodi sovra-campionate pesano meno)."""
-    peso = PREVALENZA_REALE / PREVALENZA_SIM
-    migliore, costo_min = 0.0, np.inf
-    for s in np.arange(0, 12.5, 0.5):
-        allarme = scored["punteggio"] >= s
-        costo = ((allarme & ~scored["frode"]).sum() * COSTO_FALSO_ALLARME
-                 + scored.loc[~allarme & scored["frode"], "importo"].sum() * peso)
-        if costo <= costo_min:  # a parità di costo: soglia più alta, meno disturbo
-            migliore, costo_min = float(s), costo
-    return migliore
-
-
-def metriche(scored: pd.DataFrame, soglia: float, p: dict) -> dict:
-    n = scored["cliente"].nunique()
-    clienti_frodati = scored.loc[scored["frode"], "cliente"].unique()
-    alert = scored[scored["punteggio"] >= soglia]
-    legit = alert[~alert["frode"]]
-    fraud = alert[alert["frode"]]
-    # alert per cliente all'anno alla prevalenza reale
-    a_legit = len(legit) / n
-    a_fraud = (len(fraud) / max(len(clienti_frodati), 1)) * PREVALENZA_REALE
-    alert_anno = a_legit + a_fraud
-    q_confl = (_quota_conflitti(legit) * a_legit + _quota_conflitti(fraud) * a_fraud) / max(alert_anno, 1e-9)
-    q_banca = q_confl + (1 - q_confl) * p["quota_non_risponde"]
-    casi_banca = alert_anno * q_banca
-    # intercettazione per profilo: cliente frodato con almeno un'operazione di frode sopra soglia
-    fr = scored[scored["frode"]].groupby(["profilo", "cliente"])["punteggio"].max() >= soglia
-    per_profilo = fr.groupby("profilo").mean()
-    # importo protetto: dal primo alert in poi l'episodio si ferma; prima, il denaro è perso
-    tot, persi = {}, {}
-    for (prof, _), g in scored[scored["frode"]].sort_values("data").groupby(["profilo", "cliente"]):
-        sopra = (g["punteggio"] >= soglia).to_numpy()
-        primo = int(sopra.argmax()) if sopra.any() else len(g)
-        tot[prof] = tot.get(prof, 0.0) + g["importo"].sum()
-        persi[prof] = persi.get(prof, 0.0) + g["importo"].iloc[:primo].sum()
-    protetto = {k: 1 - persi[k] / tot[k] for k in tot if tot[k] > 0}
-    protetto_tot = 1 - sum(persi.values()) / max(sum(tot.values()), 1e-9)
-    return {
-        "soglia": soglia,
-        "alert/cliente/anno": round(alert_anno, 2),
-        "di cui falsi allarmi": round(a_legit, 2),
-        "quota contatto": round(1 - q_banca, 3),
-        "quota banca": round(q_banca, 3),
-        "di cui per conflitto d'interesse": round(q_confl, 3),
-        "casi banca/cliente/anno": round(casi_banca, 3),
-        "cost to serve CHF": round(p["costo_infrastruttura"] + casi_banca * p["costo_caso_banca"], 2),
-        "intercettazione totale": round(float(fr.mean()), 3) if len(fr) else float("nan"),
-        **{f"intercettazione {k}": round(float(v), 3) for k, v in per_profilo.items()},
-        "importo protetto": round(float(protetto_tot), 3),
-        **{f"importo protetto {k}": round(float(v), 3) for k, v in protetto.items()},
-    }
-
-
-def scenario(nome: str, clienti: int, seed: int, soglia: float | None = None, **override) -> dict:
-    p = {**BASE, **override}
-    port = genera_portafoglio(n_clienti=clienti, prob_frode=PREVALENZA_SIM,
-                              prob_contatto_con_procura=p["prob_contatto_con_procura"],
-                              eventi_legittimi=p["eventi_legittimi"], seed=seed)
-    scored = applica_soglia_contanti(punteggia_portafoglio(port), p["soglia_contanti"])
-    s = soglia if soglia is not None else soglia_ottimale_pesata(scored)
+def run(nome, clienti, seed, soglia=None, detection=True, eventi=None, gen_kw=None,
+        p_non_risposta=0.15, par=None):
+    gen_kw = dict(gen_kw or {})
     print(f"  · {nome}", flush=True)
-    return {"scenario": nome, **metriche(scored, s, p)}
+    det = {}
+    if detection or soglia is None:
+        sim = _book(clienti, seed + 1, PREVALENZA_SIM, eventi=eventi, **gen_kw)
+        if soglia is None:
+            _, soglia = economics.calibra_soglia(sim, prevalenza_reale=PREVALENZA_REALE)
+        det = economics.importo_protetto(sim, soglia)
+    reale = _book(clienti, seed, PREVALENZA_REALE, eventi=eventi, **gen_kw)
+    carico = economics.stima_alert(reale, soglia, par=par, p_non_risposta=p_non_risposta, seed=seed)
+    return {"scenario": nome, "threshold": soglia,
+            "alerts/client/year": carico["alert_per_cliente_anno"],
+            "resolved by contact": carico["quota_contatto"],
+            "to the bank": carico["quota_banca"],
+            "to the bank for conflict of interest": carico["quota_banca_conflitto"],
+            "bank cases/client/year": carico["casi_banca_per_cliente_anno"],
+            "cost to serve CHF": carico["cost_to_serve"],
+            "fraud episodes caught": det.get("episodi_intercettati", float("nan")),
+            "fraud money protected": det.get("importo_protetto", float("nan")),
+            **{k.replace("importo_protetto_", "money protected · ").replace(
+                "episodi_intercettati_", "episodes caught · "): v
+               for k, v in det.items() if k.startswith(("importo_protetto_", "episodi_intercettati_"))}}
 
 
-def tabella_md(df: pd.DataFrame, colonne: list[str]) -> str:
-    righe = ["| " + " | ".join(colonne) + " |", "|" + "---|" * len(colonne)]
-    for _, r in df[colonne].iterrows():
-        righe.append("| " + " | ".join(f"{v:.0%}" if isinstance(v, float) and ("quota" in c or "intercett" in c or "protetto" in c)
-                                         else str(v) for c, v in zip(colonne, r)) + " |")
-    return "\n".join(righe)
+def fmt(v, col):
+    if isinstance(v, float) and v != v:
+        return "—"
+    if isinstance(v, float) and any(w in col for w in ("resolved", "to the bank", "caught", "protected")) \
+            and "cases" not in col:
+        return f"{v:.0%}"
+    return str(v)
+
+
+def md_table(df, cols):
+    out = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+    for _, r in df[cols].iterrows():
+        out.append("| " + " | ".join(fmt(r[c], c) for c in cols) + " |")
+    return "\n".join(out)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--clienti", type=int, default=600)
+    ap.add_argument("--clienti", type=int, default=500)
     ap.add_argument("--seed", type=int, default=7)
     a = ap.parse_args()
+    n, sd = a.clienti, a.seed
 
-    print(f"Scenario base ({a.clienti} clienti)…", flush=True)
-    base = scenario("Base", a.clienti, a.seed)
-    s = base["soglia"]
-    print(f"Soglia ottimale: {s}. Analisi di sensibilità alla stessa soglia…", flush=True)
-    pg = _EVENTI_LEGITTIMI["prelievo_grande"]
-    righe = [base,
-             scenario(f"Prelievi grandi legittimi: 1/anno (base {pg:g})", a.clienti, a.seed, s,
-                      eventi_legittimi={"prelievo_grande": 1.0}),
-             scenario("Prelievi grandi legittimi: 4/anno", a.clienti, a.seed, s,
-                      eventi_legittimi={"prelievo_grande": 4.0}),
-             scenario("Soglia contanti concordata: CHF 5'000", a.clienti, a.seed, s, soglia_contanti=5_000),
-             scenario("Soglia contanti concordata: CHF 10'000", a.clienti, a.seed, s, soglia_contanti=10_000),
-             scenario("Contatti che non rispondono: 25% (base 15%)", a.clienti, a.seed, s, quota_non_risponde=0.25),
-             scenario("Contatti che non rispondono: 5%", a.clienti, a.seed, s, quota_non_risponde=0.05),
-             scenario("Costo per caso alla banca: CHF 25 (base 15)", a.clienti, a.seed, s, costo_caso_banca=25.0),
-             scenario("Contatto con procura (abuso interno): 25% (base 50%)", a.clienti, a.seed, s,
-                      prob_contatto_con_procura=0.25)]
-    df = pd.DataFrame(righe)
+    print(f"Base scenario ({n} customers per book)…", flush=True)
+    base = run("Base", n, sd)
+    s = base["threshold"]
+    print(f"Calibrated threshold: {s}. Sensitivity at the same threshold…", flush=True)
+    pg = profiles.PRESET["anziano"].prelievi_straordinari
+    rows = [base,
+            run(f"Large legit cash withdrawals: 1/year (base {pg:g})", n, sd, s, eventi={"prelievi_straordinari": 1.0}),
+            run("Large legit cash withdrawals: 4/year", n, sd, s, eventi={"prelievi_straordinari": 4.0}),
+            run("Legit transfers abroad: 1.5/year (base 0.5)", n, sd, s, detection=False,
+                eventi={"bonifici_esteri": 1.5}),
+            run("Bank antifraud false positives: 1/year (base 0.3)", n, sd, s, detection=False,
+                eventi={"falsi_alert_banca": 1.0}),
+            run("Contacts not answering in 30 min: 30% (base 15%)", n, sd, s, detection=False, p_non_risposta=0.30),
+            run("Contacts not answering in 30 min: 5%", n, sd, s, detection=False, p_non_risposta=0.05),
+            run("Customers with a POA holder: 30% (base 15%)", n, sd, s, detection=False,
+                gen_kw={"prob_procuratore": 0.30}),
+            run("Bank review cost per case: CHF 25 (base 15)", n, sd, s, detection=False,
+                par=economics.ParametriServizio(costo_revisione_banca=25.0))]
+    df = pd.DataFrame(rows)
 
-    os.makedirs("risultati", exist_ok=True)
-    df.to_csv("risultati/sensibilita.csv", index=False)
-    principali = ["scenario", "alert/cliente/anno", "quota banca", "cost to serve CHF",
-                  "intercettazione totale", "importo protetto"]
-    profili = ([c for c in df.columns if c.startswith("intercettazione ") and c != "intercettazione totale"]
-               + [c for c in df.columns if c.startswith("importo protetto ")])
+    print("Robustness: base scenario with two more seeds…", flush=True)
+    rob = pd.DataFrame([base] + [run(f"Base, seed {sd + k}", n, sd + k) for k in (100, 200)])
+    rob.loc[0, "scenario"] = f"Base, seed {sd}"
+
+    # effect on the pitch's unit economics (v6 page 3)
+    cts = base["cost to serve CHF"]
+    ue = []
+    for sc in economics.SCENARI_BUSINESS:
+        v6 = economics.unit_economics_banca(sc, 8.0 if sc == "prudente" else 7.0)
+        sim = economics.unit_economics_banca(sc, cts)
+        ue.append({"business scenario": sc,
+                   "contribution/client v6": v6["contribution_cliente"],
+                   "contribution/client simulated": sim["contribution_cliente"],
+                   "LTV/CAC v6": v6["ltv_su_cac"], "LTV/CAC simulated": sim["ltv_su_cac"],
+                   "CAC payback months v6": v6["rientro_cac_mesi"],
+                   "CAC payback months simulated": sim["rientro_cac_mesi"]})
+    ue = pd.DataFrame(ue)
+
+    os.makedirs("results", exist_ok=True)
+    pd.concat([df, rob.iloc[1:]]).to_csv("results/sensitivity.csv", index=False)
+    rng_ = {c: (rob[c].min(), rob[c].max()) for c in ["threshold", "alerts/client/year", "to the bank",
+                                                       "cost to serve CHF", "fraud money protected"]}
+    main_cols = ["scenario", "alerts/client/year", "to the bank", "cost to serve CHF",
+                 "fraud episodes caught", "fraud money protected"]
+    threat_cols = [c for c in df.columns if c.startswith(("money protected · ", "episodes caught · "))]
     b = df.iloc[0]
-    md = f"""# Simulazione del portafoglio · risultati
+    report = f"""# Portfolio simulation · results
 
-*Generato il {date.today():%d.%m.%Y} con `python scripts/simula_portafoglio.py --clienti {a.clienti} --seed {a.seed}`. Dati interamente sintetici.*
+*Generated on {date.today():%d.%m.%Y} with `python scripts/simula_portafoglio.py --clienti {n} --seed {sd}`. All data are synthetic.*
 
-## Scenario base
+## Base scenario vs the pitch (document v6)
 
-| Indicatore | Simulazione | Ipotesi del pitch (v6) |
+| Indicator | Simulation | v6 assumption |
 |---|---|---|
-| Alert per cliente all'anno | **{b['alert/cliente/anno']}** | ~1,5 |
-| … di cui falsi allarmi | {b['di cui falsi allarmi']} | — |
-| Risolti dal contatto | **{b['quota contatto']:.0%}** | ~80% |
-| Passati alla banca | **{b['quota banca']:.0%}** (di cui {b["di cui per conflitto d'interesse"]:.0%} per conflitto d'interesse) | ~20% |
-| Cost to serve per cliente | **CHF {b['cost to serve CHF']:.2f}** | CHF 7 |
-| Frodi intercettate (almeno un alert nell'episodio) | **{b['intercettazione totale']:.0%}** | — |
-| Importo protetto (fermato dal primo alert in poi) | **{b['importo protetto']:.0%}** | — |
+| Alerts per client per year | **{b['alerts/client/year']:.2f}** | ~1.5 |
+| Resolved by the trusted contact | **{b['resolved by contact']:.0%}** | ~80% |
+| Escalated to the bank | **{b['to the bank']:.0%}** (conflict of interest: {b['to the bank for conflict of interest']:.0%} of alerts) | ~20% |
+| Bank cases per client per year | {b['bank cases/client/year']:.2f} | — |
+| Cost to serve per client per year | **CHF {b['cost to serve CHF']:.2f}** | CHF 7 |
+| Fraud episodes caught | **{b['fraud episodes caught']:.0%}** | — |
+| Fraud money protected (stopped from the first pause on) | **{b['fraud money protected']:.0%}** | — |
 
-Soglia di coinvolgimento: **{s}** (costo minimo con prevalenza delle frodi all'{PREVALENZA_REALE:.0%} e costo di un falso allarme CHF {COSTO_FALSO_ALLARME:.0f}).
+Calibrated threshold: **{s}** (minimum expected cost at {PREVALENZA_REALE:.0%} real prevalence, CHF 5 per false alarm).
 
-Per tipo di minaccia:
+**Robustness.** Repeating the base scenario with three different seeds (each with its own calibrated threshold):
 
-{tabella_md(df.iloc[[0]], profili)}
+{md_table(rob, ["scenario", "threshold", "alerts/client/year", "to the bank", "cost to serve CHF", "fraud money protected"])}
 
-## Analisi di sensibilità (stessa soglia)
+Range to quote in the pitch: **{rng_['alerts/client/year'][0]:.1f}–{rng_['alerts/client/year'][1]:.1f} alerts per client per year, {rng_['to the bank'][0]:.0%}–{rng_['to the bank'][1]:.0%} to the bank, cost to serve CHF {rng_['cost to serve CHF'][0]:.1f}–{rng_['cost to serve CHF'][1]:.1f}.** The cost curve is shallow around its minimum, so small differences between simulated books move the calibrated threshold by a few hundredths, and the cost to serve with it.
 
-{tabella_md(df, principali)}
+By threat:
 
-## Come leggere i risultati
+{md_table(df.iloc[[0]], threat_cols)}
 
-- **Perché l'intercettazione è così alta.** La soglia ottimale coinvolge il contatto per qualsiasi prelievo molto sopra le abitudini: le frodi vengono viste quasi sempre, ma il prezzo sono i falsi allarmi. È il compromesso centrale del prodotto, non un risultato "gratis". Con frodi reali più sottili l'intercettazione sarà più bassa: va verificata nel pilota.
-- **Da dove vengono gli alert.** Quasi tutti i falsi allarmi sono prelievi allo sportello legittimi ma grandi (qualche migliaio di franchi). Il loro numero dipende da un'ipotesi che oggi non è verificata: quanti prelievi straordinari fa un over 65 in un anno.
-- **La leva di prodotto.** Una soglia di importo sui contanti concordata tra persona e contatto riduce molto il disturbo; il prezzo da pagare è che i piccoli prelievi ripetuti (abuso interno) vengono intercettati meno. Va mostrato come scelta consapevole.
-- **Cosa pesa sul cost to serve.** Le escalation alla banca: conflitti d'interesse (contatto con procura) e contatti che non rispondono in tempo.
-- **Ipotesi da calibrare (Utente 1):** prevalenza delle frodi, frequenza dei prelievi straordinari, quota di clienti con una procura, tempo di risposta dei contatti.
+## Effect on the unit economics of a typical bank (v6, page 3)
+
+Same adoption, price and CAC as v6; only the cost to serve changes (simulated: CHF {cts:.2f}).
+
+{md_table(ue, list(ue.columns))}
+
+## Sensitivity (same threshold)
+
+{md_table(df, main_cols)}
+
+## How to read these results
+
+- **Scope.** Sentinel looks at cash at the counter, safe deposit box visits and transfers to new or foreign accounts (v6). Card payments are left to the bank's card antifraud, so they never raise a Sentinel alert.
+- **Where alerts come from.** New payees and transfers abroad, rare safe deposit box visits, very large cash withdrawals, and the bank's own antifraud flags. Each is an assumption on behaviour that only a pilot with a bank can confirm.
+- **What drives the cost to serve.** Cases escalated to the bank: contacts who do not answer in 30 minutes and conflicts of interest (the contact holds a power of attorney).
+- **Detection is high on synthetic data.** Small scams (a few thousand francs) are the ones that slip through; with real, subtler fraud the rate will be lower. Present it as a result to verify in the pilot, not as a promise.
+- **Money protected is a benefit for the client and the family** (v6). The bank pays for trust, retention of senior clients, the link with the heirs and fewer complaints.
+- **Assumptions to calibrate (Utente 1):** fraud prevalence, frequency of unusual legitimate operations, share of customers with a POA holder, response time of contacts.
 """
-    with open("risultati/simulazione_portafoglio.md", "w", encoding="utf-8") as f:
-        f.write(md)
-    print(df[principali].to_string(index=False))
-    print("\nReport: risultati/simulazione_portafoglio.md")
+    with open("results/simulation_report.md", "w", encoding="utf-8") as f:
+        f.write(report)
+    print(df[main_cols].to_string(index=False))
+    print()
+    print(ue.to_string(index=False))
+    print("\nReport: results/simulation_report.md")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,12 @@
+scenario,threshold,alerts/client/year,resolved by contact,to the bank,to the bank for conflict of interest,bank cases/client/year,cost to serve CHF,fraud episodes caught,fraud money protected,money protected · abuso_interno,episodes caught · abuso_interno,money protected · bonifico_estero,episodes caught · bonifico_estero,money protected · truffa_esterna,episodes caught · truffa_esterna
+Base,0.48,1.758,0.785,0.215,0.081,0.378,8.36,0.946,0.979,0.957,1.0,1.0,1.0,0.974,0.915
+Large legit cash withdrawals: 1/year (base 2),0.48,1.506,0.789,0.211,0.086,0.318,7.36,0.946,0.979,0.957,1.0,1.0,1.0,0.974,0.915
+Large legit cash withdrawals: 4/year,0.48,2.166,0.778,0.222,0.074,0.48,10.04,0.938,0.97,0.957,1.0,1.0,1.0,0.962,0.902
+Legit transfers abroad: 1.5/year (base 0.5),0.48,2.752,0.778,0.222,0.08,0.612,12.25,,,,,,,,
+Bank antifraud false positives: 1/year (base 0.3),0.48,2.384,0.768,0.232,0.086,0.552,11.2,,,,,,,,
+Contacts not answering in 30 min: 30% (base 15%),0.48,1.758,0.638,0.362,0.081,0.636,12.1,,,,,,,,
+Contacts not answering in 30 min: 5%,0.48,1.758,0.875,0.125,0.081,0.22,6.07,,,,,,,,
+Customers with a POA holder: 30% (base 15%),0.48,1.726,0.728,0.272,0.155,0.47,9.68,,,,,,,,
+Bank review cost per case: CHF 25 (base 15),0.48,1.758,0.785,0.215,0.081,0.378,12.14,,,,,,,,
+"Base, seed 107",0.5,1.57,0.776,0.224,0.088,0.352,7.89,0.904,0.967,0.895,1.0,1.0,1.0,0.952,0.821
+"Base, seed 207",0.5,1.446,0.793,0.207,0.069,0.3,7.07,0.942,0.967,0.767,0.875,1.0,1.0,0.958,0.906

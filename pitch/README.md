@@ -1,9 +1,13 @@
-# Materiali del pitch (Utente 4)
+# Pitch materials (Utente 4)
 
-Qui vanno deck, documento di progetto e canvas, oppure un link alla cartella condivisa
-(Google Drive / OneDrive) se preferite lavorare fuori da GitHub.
+**Single source of truth for the whole group:**
 
-- Documento di progetto: Sentinel v6 (idea, canvas, mercato, proiezioni, struttura del deck)
-- Piano di lavoro: Sentinel - Divisione del lavoro v2
+| File | What it is |
+|---|---|
+| `Sentinel-v6.pdf` | Project document **v6**: idea, canvas, market, go-to-market, unit economics, projection, deck structure. Check: the canvas says "v6". |
+| `Sentinel-work-plan-v2.pdf` | Division of work **v2**, aligned with v6. |
 
-I numeri del cost to serve vanno agganciati ai risultati di `stima_alert` (Utente 2).
+Older versions (v5 and earlier) are superseded: please do not circulate them.
+
+Numbers to update in the deck from the simulation (`results/simulation_report.md`): alerts per client,
+contact/bank split, cost to serve. Deck, drafts and exports can live here or in a shared drive linked from here.
