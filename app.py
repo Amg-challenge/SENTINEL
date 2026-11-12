@@ -437,7 +437,7 @@ elif vista.startswith("4"):
                     "status": e if e != "pending" else "to review",
                 })
     if righe:
-        st.dataframe(pd.DataFrame(righe), width="stretch", hide_index=True)
+        st.table(pd.DataFrame(righe))
     elif not cfgs["attivo"]:
         st.warning("Sentinel is not active (screen 1).")
     else:
