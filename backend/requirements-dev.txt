@@ -1,0 +1,6 @@
+# Development: tests, the internal Streamlit analysis tool, the notebook
+-r requirements.txt
+pytest>=8.0
+httpx>=0.27
+streamlit>=1.46
+altair>=5.4

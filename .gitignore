@@ -16,3 +16,10 @@ env/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# front-end
+node_modules/
+dist/
+.vercel/
+.env
+.env.local
