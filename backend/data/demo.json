@@ -1,9 +1,9 @@
 {
-  "engine_version": "0.1.0",
-  "generated_at": "2026-11-12T13:57:52+00:00",
+  "engine_version": "0.2.0",
+  "generated_at": "2026-11-16T11:30:14+00:00",
   "config": {
-    "engine_version": "0.1.0",
-    "threshold": 0.54,
+    "engine_version": "0.2.0",
+    "threshold": 0.5,
     "response_window_minutes": 30,
     "revocation_delay_hours": 72,
     "scope": [
@@ -44,7 +44,7 @@
       "results": {
         "default": {
           "score": 0.694,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "trusted_contact",
@@ -69,7 +69,7 @@
         },
         "contact_has_power_of_attorney": {
           "score": 0.694,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -94,7 +94,7 @@
         },
         "contact_did_not_answer_30min": {
           "score": 0.694,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -136,7 +136,7 @@
       "results": {
         "default": {
           "score": 0.7311,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "trusted_contact",
@@ -169,7 +169,7 @@
         },
         "contact_has_power_of_attorney": {
           "score": 0.7311,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -202,7 +202,7 @@
         },
         "contact_did_not_answer_30min": {
           "score": 0.7311,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -252,7 +252,7 @@
       "results": {
         "default": {
           "score": 0.6225,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "trusted_contact",
@@ -277,7 +277,7 @@
         },
         "contact_has_power_of_attorney": {
           "score": 0.6225,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -302,7 +302,7 @@
         },
         "contact_did_not_answer_30min": {
           "score": 0.6225,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -344,7 +344,7 @@
       "results": {
         "default": {
           "score": 0.6238,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -369,7 +369,7 @@
         },
         "contact_has_power_of_attorney": {
           "score": 0.6238,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -394,7 +394,7 @@
         },
         "contact_did_not_answer_30min": {
           "score": 0.6238,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "score",
           "destination": "bank",
@@ -436,7 +436,7 @@
       "results": {
         "default": {
           "score": 0.0474,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "bank_antifraud",
           "destination": "trusted_contact",
@@ -461,7 +461,7 @@
         },
         "contact_has_power_of_attorney": {
           "score": 0.0474,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "bank_antifraud",
           "destination": "bank",
@@ -486,7 +486,7 @@
         },
         "contact_did_not_answer_30min": {
           "score": 0.0474,
-          "threshold": 0.54,
+          "threshold": 0.5,
           "paused": true,
           "pause_origin": "bank_antifraud",
           "destination": "bank",
@@ -513,219 +513,219 @@
     }
   ],
   "stats": {
-    "threshold": 0.54,
-    "auc": 0.9903,
-    "simulated_clients": 150,
-    "alerts_per_client_year": 1.14,
-    "share_resolved_by_contact": 0.754,
-    "share_escalated_to_bank": 0.246,
-    "cost_to_serve_chf": 6.63,
-    "fraud_episodes_caught": 0.862,
-    "fraud_money_protected": 0.941,
+    "threshold": 0.5,
+    "auc": 0.9815,
+    "simulated_clients": 1800,
+    "alerts_per_client_year": 1.477,
+    "share_resolved_by_contact": 0.79,
+    "share_escalated_to_bank": 0.21,
+    "cost_to_serve_chf": 7.23,
+    "fraud_episodes_caught": 0.894,
+    "fraud_money_protected": 0.958,
     "cost_curve": [
       {
         "threshold": 0.0,
-        "cost_chf": 1322.7
+        "cost_chf": 1322.772
       },
       {
         "threshold": 0.02,
-        "cost_chf": 536.967
+        "cost_chf": 536.817
       },
       {
         "threshold": 0.04,
-        "cost_chf": 536.967
+        "cost_chf": 536.817
       },
       {
         "threshold": 0.06,
-        "cost_chf": 276.967
+        "cost_chf": 276.88
       },
       {
         "threshold": 0.08,
-        "cost_chf": 36.967
+        "cost_chf": 36.908
       },
       {
         "threshold": 0.1,
-        "cost_chf": 36.967
+        "cost_chf": 37.012
       },
       {
         "threshold": 0.12,
-        "cost_chf": 28.567
+        "cost_chf": 28.463
       },
       {
         "threshold": 0.14,
-        "cost_chf": 28.567
+        "cost_chf": 28.475
       },
       {
         "threshold": 0.16,
-        "cost_chf": 28.533
+        "cost_chf": 28.472
       },
       {
         "threshold": 0.18,
-        "cost_chf": 28.5
+        "cost_chf": 28.567
       },
       {
         "threshold": 0.2,
-        "cost_chf": 28.367
+        "cost_chf": 28.518
       },
       {
         "threshold": 0.22,
-        "cost_chf": 28.2
+        "cost_chf": 28.455
       },
       {
         "threshold": 0.24,
-        "cost_chf": 28.067
+        "cost_chf": 28.197
       },
       {
         "threshold": 0.26,
-        "cost_chf": 27.833
+        "cost_chf": 27.905
       },
       {
         "threshold": 0.28,
-        "cost_chf": 26.306
+        "cost_chf": 26.359
       },
       {
         "threshold": 0.3,
-        "cost_chf": 26.006
+        "cost_chf": 26.201
       },
       {
         "threshold": 0.32,
-        "cost_chf": 25.606
+        "cost_chf": 25.867
       },
       {
         "threshold": 0.34,
-        "cost_chf": 25.694
+        "cost_chf": 25.511
       },
       {
         "threshold": 0.36,
-        "cost_chf": 25.227
+        "cost_chf": 25.264
       },
       {
         "threshold": 0.38,
-        "cost_chf": 15.094
+        "cost_chf": 15.983
       },
       {
         "threshold": 0.4,
-        "cost_chf": 16.612
+        "cost_chf": 15.503
       },
       {
         "threshold": 0.42,
-        "cost_chf": 15.712
+        "cost_chf": 15.278
       },
       {
         "threshold": 0.44,
-        "cost_chf": 15.774
+        "cost_chf": 13.288
       },
       {
         "threshold": 0.46,
-        "cost_chf": 16.135
+        "cost_chf": 12.87
       },
       {
         "threshold": 0.48,
-        "cost_chf": 14.901
+        "cost_chf": 12.942
       },
       {
         "threshold": 0.5,
-        "cost_chf": 14.001
+        "cost_chf": 12.751
       },
       {
         "threshold": 0.52,
-        "cost_chf": 13.135
+        "cost_chf": 15.098
       },
       {
         "threshold": 0.54,
-        "cost_chf": 12.701
+        "cost_chf": 16.246
       },
       {
         "threshold": 0.56,
-        "cost_chf": 16.452
+        "cost_chf": 18.395
       },
       {
         "threshold": 0.58,
-        "cost_chf": 18.508
+        "cost_chf": 19.823
       },
       {
         "threshold": 0.6,
-        "cost_chf": 22.45
+        "cost_chf": 21.787
       },
       {
         "threshold": 0.62,
-        "cost_chf": 30.364
+        "cost_chf": 26.125
       },
       {
         "threshold": 0.64,
-        "cost_chf": 36.68
+        "cost_chf": 29.587
       },
       {
         "threshold": 0.66,
-        "cost_chf": 47.19
+        "cost_chf": 35.28
       },
       {
         "threshold": 0.68,
-        "cost_chf": 47.19
+        "cost_chf": 40.572
       },
       {
         "threshold": 0.7,
-        "cost_chf": 60.664
+        "cost_chf": 49.345
       },
       {
         "threshold": 0.72,
-        "cost_chf": 60.664
+        "cost_chf": 54.236
       },
       {
         "threshold": 0.74,
-        "cost_chf": 80.478
+        "cost_chf": 68.077
       },
       {
         "threshold": 0.76,
-        "cost_chf": 80.478
+        "cost_chf": 68.712
       },
       {
         "threshold": 0.78,
-        "cost_chf": 85.109
+        "cost_chf": 69.615
       },
       {
         "threshold": 0.8,
-        "cost_chf": 85.109
+        "cost_chf": 71.708
       },
       {
         "threshold": 0.82,
-        "cost_chf": 88.774
+        "cost_chf": 82.021
       },
       {
         "threshold": 0.84,
-        "cost_chf": 88.774
+        "cost_chf": 87.342
       },
       {
         "threshold": 0.86,
-        "cost_chf": 88.774
+        "cost_chf": 96.731
       },
       {
         "threshold": 0.88,
-        "cost_chf": 103.718
+        "cost_chf": 103.139
       },
       {
         "threshold": 0.9,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       },
       {
         "threshold": 0.92,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       },
       {
         "threshold": 0.94,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       },
       {
         "threshold": 0.96,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       },
       {
         "threshold": 0.98,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       },
       {
         "threshold": 1.0,
-        "cost_chf": 103.718
+        "cost_chf": 103.202
       }
     ],
     "roc_curve": [
@@ -734,76 +734,76 @@
         "tpr": 1.0
       },
       {
-        "fpr": 0.5158,
-        "tpr": 1.0
+        "fpr": 0.5157,
+        "tpr": 0.9957
       },
       {
-        "fpr": 0.0659,
-        "tpr": 1.0
+        "fpr": 0.066,
+        "tpr": 0.9859
       },
       {
-        "fpr": 0.0503,
-        "tpr": 1.0
+        "fpr": 0.0497,
+        "tpr": 0.9425
       },
       {
-        "fpr": 0.0499,
-        "tpr": 1.0
+        "fpr": 0.0495,
+        "tpr": 0.9328
       },
       {
-        "fpr": 0.049,
-        "tpr": 1.0
+        "fpr": 0.0481,
+        "tpr": 0.9219
       },
       {
-        "fpr": 0.0448,
-        "tpr": 0.9737
+        "fpr": 0.044,
+        "tpr": 0.9078
       },
       {
-        "fpr": 0.0428,
-        "tpr": 0.8947
+        "fpr": 0.0418,
+        "tpr": 0.8948
       },
       {
         "fpr": 0.0225,
-        "tpr": 0.8421
+        "tpr": 0.8774
       },
       {
-        "fpr": 0.0148,
-        "tpr": 0.7895
+        "fpr": 0.0162,
+        "tpr": 0.8514
       },
       {
-        "fpr": 0.0101,
-        "tpr": 0.7895
+        "fpr": 0.0114,
+        "tpr": 0.821
       },
       {
-        "fpr": 0.0077,
-        "tpr": 0.7105
+        "fpr": 0.0081,
+        "tpr": 0.6844
       },
       {
-        "fpr": 0.0077,
-        "tpr": 0.6316
+        "fpr": 0.0081,
+        "tpr": 0.6161
       },
       {
-        "fpr": 0.0043,
-        "tpr": 0.5263
+        "fpr": 0.0047,
+        "tpr": 0.5315
       },
       {
-        "fpr": 0.0043,
-        "tpr": 0.4211
-      },
-      {
-        "fpr": 0.0,
-        "tpr": 0.1053
+        "fpr": 0.0046,
+        "tpr": 0.4197
       },
       {
         "fpr": 0.0,
-        "tpr": 0.0789
+        "tpr": 0.1909
       },
       {
         "fpr": 0.0,
-        "tpr": 0.0263
+        "tpr": 0.1421
       },
       {
         "fpr": 0.0,
-        "tpr": 0.0
+        "tpr": 0.0184
+      },
+      {
+        "fpr": 0.0,
+        "tpr": 0.0022
       },
       {
         "fpr": 0.0,

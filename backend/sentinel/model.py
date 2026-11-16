@@ -58,6 +58,11 @@ PESI: dict[str, float] = {
 }
 SD_MIN = 0.25  # floor on the log-scale spread: avoids over-sensitivity on very regular accounts
 
+# Pause threshold, fixed by the group (16.11.2026). Cost-optimal on 1,800 simulated seniors at
+# 1% real fraud prevalence and CHF 5 per false alarm; bootstrap range 0.46-0.50. See
+# notebooks/calibrazione.ipynb and results/calibration_report.md. Recalibrate if PESI change.
+SOGLIA = 0.50
+
 
 @dataclass
 class Baseline:

@@ -4,7 +4,7 @@ Run from the backend/ folder after any change to the engine or the scenarios:
     python scripts/export_demo_data.py
 
 Writes:
-    backend/data/demo.json                      read by the API at start-up (no 10 s calibration)
+    backend/data/demo.json                      read by the API at start-up (no 2-minute simulation)
     frontend/public/demo-fallback.json          used by the front-end if the API is unreachable
 """
 import json
@@ -17,8 +17,8 @@ sys.path.insert(0, str(BACKEND))
 
 from api import service  # noqa: E402
 
-service.DATA_FILE = BACKEND / "data" / "__none__.json"   # force a fresh calibration
-service.stats.cache_clear()
+full_stats = service._calibrate()            # full run, as in notebooks/calibrazione.ipynb (~2 min)
+service.stats = lambda: full_stats           # demo_bundle() picks these up
 bundle = service.demo_bundle()
 
 targets = [BACKEND / "data" / "demo.json", BACKEND.parent / "frontend" / "public" / "demo-fallback.json"]
