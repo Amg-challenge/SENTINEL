@@ -20,7 +20,7 @@ CONTRACT (stable signatures, change only with the group's agreement):
     genera_storico(cfg, giorni=365, seed=0, ha_procuratore=False) -> DataFrame
     inietta_frode(storico, minaccia="truffa_esterna", seed=0, importo=None) -> DataFrame
     genera_frodi_simulate(n=300, seed=1, mix=None) -> DataFrame
-    genera_portafoglio(n_clienti=300, ...) -> DataFrame
+    genera_portafoglio(n_clienti=300, ..., importi_frode="prudente") -> DataFrame
 
 Columns (COLONNE):
     data (Timestamp), canale ("sportello" | "bancomat" | "cassetta" | "bonifico" | "carta"),
@@ -108,6 +108,18 @@ PRESET: dict[str, ProfiloConfig] = {
 
 INIZIO = pd.Timestamp("2025-01-06")  # a Monday
 
+# Fraud amounts. "prudente" is the base case of the pitch: deliberately LOWER than what the
+# sources report, so detection figures are a lower bound. "fonti" is closer to the sources
+# collected by Utente 1 (results/calibration_report.md): Ticino shock-call scams average
+# CHF 36k-50k; financial maltreatment of people 55+ has a median of ~CHF 113k (Pro Senectute
+# 2023), so even "fonti" stays below it for POA abuse. Used as a sensitivity.
+IMPORTI_FRODE: dict[str, dict] = {
+    "prudente": {"truffa_mediana": 10_000, "truffa_max": 80_000,
+                 "abuso_settimane": (4, 11), "abuso_importo": (300, 1_000)},
+    "fonti": {"truffa_mediana": 25_000, "truffa_max": 150_000,
+              "abuso_settimane": (6, 16), "abuso_importo": (1_000, 4_000)},
+}
+
 
 def _riga(data, canale, importo, beneficiario="", nuovo=False, estero=False,
           avviata_da="titolare", alert_banca=False, frode=False) -> dict:
@@ -178,12 +190,14 @@ def genera_storico(cfg: ProfiloConfig | str, giorni: int = 365, seed: int = 0,
 
 
 def _operazioni_frode(minaccia: str, giorno: pd.Timestamp, rng: np.random.Generator,
-                      importo: float | None = None) -> list[dict]:
+                      importo: float | None = None, importi: str = "prudente") -> list[dict]:
     """Fraudulent operations of one episode. Amounts are deliberately varied and overlap
-    with legitimate unusual spending (assumptions to calibrate with Utente 1's sources)."""
+    with legitimate unusual spending; `importi` picks a preset of IMPORTI_FRODE."""
     ops: list[dict] = []
+    imp = IMPORTI_FRODE[importi]
     if minaccia == "truffa_esterna":
-        totale = importo or float(np.clip(rng.lognormal(np.log(10_000), 0.9), 1_000, 80_000))
+        totale = importo or float(np.clip(rng.lognormal(np.log(imp["truffa_mediana"]), 0.9),
+                                          1_000, imp["truffa_max"]))
         if rng.random() < 0.5:  # empties the safe deposit box first
             ops.append(_riga(giorno, "cassetta", 0.0, frode=True))
         if rng.random() < 0.3 and importo is None:  # split over two days
@@ -193,9 +207,10 @@ def _operazioni_frode(minaccia: str, giorno: pd.Timestamp, rng: np.random.Genera
         else:
             ops.append(_riga(giorno, "sportello", totale, frode=True))
     elif minaccia == "abuso_interno":
-        for k in range(int(rng.integers(4, 11))):  # gradual: hard to see
+        for k in range(int(rng.integers(*imp["abuso_settimane"]))):  # gradual: hard to see
             ops.append(_riga(giorno + pd.Timedelta(days=7 * k), "bancomat",
-                             importo or rng.uniform(300, 1_000), avviata_da="procuratore", frode=True))
+                             importo or rng.uniform(*imp["abuso_importo"]), avviata_da="procuratore",
+                             frode=True))
     elif minaccia == "bonifico_estero":
         imp = importo or float(np.clip(rng.lognormal(np.log(8_000), 0.8), 1_000, 60_000))
         ops.append(_riga(giorno, "bonifico", imp, beneficiario=f"Foreign IBAN #{rng.integers(1000, 9999)}",
@@ -230,7 +245,7 @@ def genera_frodi_simulate(n: int = 300, seed: int = 1, mix: dict | None = None) 
 def genera_portafoglio(n_clienti: int = 300, mix_popolazione: dict | None = None,
                        prob_frode: float = 0.01, prob_procuratore: float = 0.15,
                        prob_contatto_con_procura: float = 0.5, eventi: dict | None = None,
-                       seed: int = 0) -> pd.DataFrame:
+                       seed: int = 0, importi_frode: str = "prudente") -> pd.DataFrame:
     """A simulated book of customers, to measure alerts and cost to serve on real numbers.
 
     Each customer gets two years: the first ("storico") teaches the engine their habits,
@@ -241,8 +256,11 @@ def genera_portafoglio(n_clienti: int = 300, mix_popolazione: dict | None = None
     - `prob_contatto_con_procura`: if there is one, probability that this person is
       also the trusted contact (then every alert goes to the bank: conflict of interest).
     - `eventi`: overrides of ProfiloConfig fields for every population (sensitivity).
+    - `importi_frode`: "prudente" (default, base case) or "fonti" (amounts closer to the
+      public sources; see IMPORTI_FRODE).
 
-    1% of customers defrauded per year is an assumption to calibrate (Utente 1). To
+    1% of customers defrauded per year is consistent with the Pro Senectute 2023 study
+    (results/calibration_report.md; tested at 0.5%-2%). To
     measure the detection rate, oversample (e.g. 0.10): it does not change the alerts
     on legitimate customers.
 
@@ -266,7 +284,8 @@ def genera_portafoglio(n_clienti: int = 300, mix_popolazione: dict | None = None
                 if procuratore else (["truffa_esterna", "bonifico_estero"], [0.6, 0.4])
             minaccia = str(rng.choice(opzioni[0], p=opzioni[1]))
             giorno = INIZIO + pd.Timedelta(days=int(rng.integers(380, 700)))
-            df = pd.concat([df, pd.DataFrame(_operazioni_frode(minaccia, giorno, rng), columns=COLONNE)],
+            df = pd.concat([df, pd.DataFrame(_operazioni_frode(minaccia, giorno, rng, importi=importi_frode),
+                                             columns=COLONNE)],
                            ignore_index=True).sort_values("data", kind="stable").reset_index(drop=True)
         pezzi.append(df.assign(
             cliente=c, popolazione=chiave, minaccia=minaccia,
