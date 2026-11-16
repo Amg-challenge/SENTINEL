@@ -119,6 +119,28 @@ def test_protected_amount_in_range():
     assert 0 <= p["importo_protetto"] <= 1 and 0 <= p["episodi_intercettati"] <= 1
 
 
+def test_fraud_amount_presets():
+    kw = dict(n_clienti=30, prob_frode=0.6, prob_procuratore=0.5, seed=4)
+    default = profiles.genera_portafoglio(**kw)
+    pd.testing.assert_frame_equal(default, profiles.genera_portafoglio(**kw, importi_frode="prudente"))
+    fonti = profiles.genera_portafoglio(**kw, importi_frode="fonti")
+    for m in ("truffa_esterna", "abuso_interno"):
+        assert (fonti.loc[fonti["minaccia"] == m, "importo"].where(fonti["frode_reale"]).median()
+                > default.loc[default["minaccia"] == m, "importo"].where(default["frode_reale"]).median())
+
+
+def test_cash_limit_lever():
+    sc = _portafoglio(prob_frode=0.6)
+    lim = economics.applica_limite_contanti(sc, 5_000)
+    assert len(lim) == len(sc) and (lim["punteggio"] <= sc["punteggio"]).all()
+    poa = sc["avviata_da"] == "procuratore"
+    assert (lim.loc[poa, "punteggio"] == sc.loc[poa, "punteggio"]).all()   # POA withdrawals stay covered
+    piccoli = sc["canale"].isin(["sportello", "bancomat"]) & ~poa & (sc["importo"] < 5_000)
+    assert (lim.loc[piccoli, "punteggio"] == 0).all()
+    assert (economics.stima_alert(lim, model.SOGLIA)["alert_per_cliente_anno"]
+            <= economics.stima_alert(sc, model.SOGLIA)["alert_per_cliente_anno"])
+
+
 if __name__ == "__main__":
     for nome, f in list(globals().items()):
         if nome.startswith("test_"):

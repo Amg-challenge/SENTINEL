@@ -26,7 +26,7 @@ pip install -r requirements-dev.txt    # requirements.txt alone = what Railway i
 uvicorn api.main:app --reload          # the API on http://localhost:8000 (docs: /docs)
 python -m pytest -q                    # contract and API tests
 python scripts/export_demo_data.py     # refresh data/demo.json and the front-end fallback
-python scripts/simula_portafoglio.py   # portfolio simulation (~4 min) -> results/
+python scripts/simula_portafoglio.py   # portfolio simulation (~15 min) -> results/
 streamlit run app.py                   # internal analysis tool (not the pitch demo)
 ```
 
@@ -110,16 +110,17 @@ unit_economics_banca(scenario, cost_to_serve) -> dict                    # v6, p
 4. To change a signature: agree in the group first, then change it together with its test.
 5. One source of truth for the pitch: the documents in `../pitch/`.
 
-## Simulation results (base scenario, three seeds)
+## Simulation results (threshold 0.50, updated 16.11.2026)
 
 | | Simulation | v6 assumption |
 |---|---|---|
-| Alerts per client per year | 1.4 - 1.8 | ~1.5 |
-| Escalated to the bank | 21 - 22% | ~20% |
-| Cost to serve per client per year | CHF 7.1 - 8.4 | CHF 7 |
-| Fraud money protected (synthetic data) | 97 - 98% | — |
+| Alerts per client per year | 1.48 (range 1.48 - 1.58) | ~1.5 |
+| Escalated to the bank | 21% (21 - 22%) | ~20% |
+| Cost to serve per client per year | CHF 7.23 (CHF 7.23 - 7.70) | CHF 7 |
+| Bank's LTV/CAC, base scenario | 7.3x | 7.4x |
+| Fraud episodes caught / money protected (synthetic data) | 89% / 96% | — |
 
-The v6 assumptions hold within the simulated range; the cost to serve is slightly above CHF 7, which lowers the base-case contribution per client from CHF 23 to CHF 21.6-22.9 (LTV/CAC 6.9-7.3× instead of 7.4×). Details and sensitivity: `results/simulation_report.md`. (The API's `/stats` comes from a smaller, faster calibration book of 150 clients: for the pitch, quote the report.)
+The v6 assumptions hold: v6 can keep CHF 7 as the cost to serve. Report, API `/stats` and `notebooks/calibrazione.ipynb` use the same simulated books, so they show the same numbers. Details, sensitivity and the numbers for the deck: `results/simulation_report.md`.
 
 ---
 *All data are synthetic: no real customer data.*

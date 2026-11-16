@@ -22,6 +22,7 @@ CONTRACT (stable signatures):
     calibra_soglia(scored, ...) -> (DataFrame, soglia)
     stima_alert(scored, soglia, par=None, ...) -> dict            # PER CUSTOMER
     importo_protetto(scored, soglia) -> dict
+    applica_limite_contanti(scored, limite) -> DataFrame         # optional lever (sensitivity)
     unit_economics_banca(scenario, cost_to_serve, ...) -> dict
 """
 from __future__ import annotations
@@ -212,6 +213,20 @@ def importo_protetto(scored: pd.DataFrame, soglia: float) -> dict:
             out[f"importo_protetto_{m}"] = round(1 - p / t, 3) if t else float("nan")
             out[f"episodi_intercettati_{m}"] = round(v / k, 3) if k else float("nan")
     return out
+
+def applica_limite_contanti(scored: pd.DataFrame, limite: float) -> pd.DataFrame:
+    """Optional lever: a cash limit agreed with the customer at sign-up.
+
+    Cash withdrawals (counter or ATM) made BY THE HOLDER below `limite` CHF never raise a
+    Sentinel pause on their own score: fewer alerts, less disturbance, but small scams slip
+    through. Withdrawals by a POA holder stay fully covered (internal abuse is made of many
+    small withdrawals), and flags from the bank's antifraud still pause. Returns a copy.
+    """
+    out = scored.copy()
+    contanti = out["canale"].isin(["sportello", "bancomat"]) & (out["avviata_da"] == "titolare")
+    out.loc[contanti & (out["importo"] < limite), "punteggio"] = 0.0
+    return out
+
 
 # ---------------------------------------------------------------- link to the pitch (v6, page 3)
 
