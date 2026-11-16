@@ -14,6 +14,8 @@ The demo shown during the pitch. Built from the Lovable prompt (`../docs/lovable
 | Deploy | Vercel, production branch `main`, top bar shows **Live API** |
 | Direct links | `/`, `/person`, `/counter`, `/contact`, `/bank`, `/appendix` all load when opened directly (server-rendered, HTTP 200); unknown paths return 404 |
 | Offline fallback | `/demo-fallback.json` served; "Force offline data" switches to it |
+| Tests | `npm test`: all **15** front-end tests pass (run in Codespaces, 16 November 2026) |
+| 72-hour revocation | Re-tested on the Vercel interface (16 November 2026): at 71 hours Sentinel is still active, at 72 hours it is deactivated correctly |
 
 ## Stack
 
@@ -67,4 +69,3 @@ Already configured — only for reference if the project is recreated:
 ## Known limitations
 
 - Reloading the page resets consent, decisions and clocks (no persistence yet; optional).
-- The 72-hour revocation flow was tested on the old Streamlit app; it still has to be re-tested on this interface.
