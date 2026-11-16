@@ -7,4 +7,4 @@ Moduli e responsabili (vedi README):
 - workflow.py  -> Utente 1 (instradamento contatto/banca)
 - app.py       -> Utente 3 (interfaccia)
 """
-__version__ = "0.1.0"
+__version__ = "0.2.0"

@@ -18,6 +18,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from sentinel import __version__, economics, model, profiles
 from sentinel.workflow import (ATTESA_REVOCA_ORE, FINESTRA_RISPOSTA_MIN, Contatto, decidi,
@@ -25,7 +26,7 @@ from sentinel.workflow import (ATTESA_REVOCA_ORE, FINESTRA_RISPOSTA_MIN, Contatt
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "demo.json"
 SEED_PERSONA = 7          # the protected person of the demo: a typical senior
-SEED_CALIBRAZIONE = 11    # simulated book used to calibrate the threshold
+SEED_CALIBRAZIONE = 11    # small book used only if data/demo.json is missing
 
 # ---------------------------------------------------------------- English <-> engine
 CHANNELS = {"counter": "sportello", "atm": "bancomat", "safe_deposit_box": "cassetta",
@@ -100,22 +101,34 @@ def _baseline() -> model.Baseline:
     return model.adatta_baseline(profiles.genera_storico("anziano", seed=SEED_PERSONA))
 
 
-def _calibrate(n_clienti: int = 150) -> dict:
-    """Threshold and statistics from a simulated book of seniors (frauds oversampled 15%,
-    re-weighted to 1% real prevalence). Deterministic: same seed, same numbers."""
-    port = profiles.genera_portafoglio(n_clienti=n_clienti, prob_frode=0.15, seed=SEED_CALIBRAZIONE)
-    scored = economics.punteggia_portafoglio(port)
-    curva, soglia = economics.calibra_soglia(scored)
+def _book(seed: int, n_clienti: int, prob_frode: float) -> "pd.DataFrame":
+    """One scored book of seniors; customer ids made unique across seeds."""
+    port = profiles.genera_portafoglio(n_clienti=n_clienti, prob_frode=prob_frode, seed=seed)
+    port["cliente"] = port["cliente"] + seed * 10_000
+    return economics.punteggia_portafoglio(port)
+
+
+def _calibrate(seeds_detection=range(6), seeds_load=range(100, 103), n_clienti: int = 300) -> dict:
+    """Statistics at the engine threshold (model.SOGLIA), computed as in notebooks/calibrazione.ipynb.
+
+    - cost curve, ROC and fraud stopped: books with frauds oversampled to 30% (re-weighted to the
+      real prevalence of 1% in the cost curve);
+    - alerts, contact/bank split, cost to serve: books at the real prevalence of 1%.
+    Deterministic: same seeds, same numbers (~2 minutes; scripts/export_demo_data.py stores them)."""
+    scored = pd.concat([_book(s, n_clienti, 0.30) for s in seeds_detection], ignore_index=True)
+    reale = pd.concat([_book(s, n_clienti, 0.01) for s in seeds_load], ignore_index=True)
+    soglia = model.SOGLIA
+    curva, _ = economics.calibra_soglia(scored)
     in_scope = scored[scored["canale"] != "carta"]
     roc, auc = economics.curva_roc(in_scope.loc[~in_scope["frode_reale"], "punteggio"],
                                    in_scope.loc[in_scope["frode_reale"], "punteggio"])
-    carico = economics.stima_alert(scored[~scored["frode_reale"]], soglia)
+    carico = economics.stima_alert(reale, soglia)
     prot = economics.importo_protetto(scored, soglia)
     roc_small = roc.iloc[::10]
     return {
         "threshold": round(float(soglia), 4),
         "auc": round(float(auc), 4),
-        "simulated_clients": int(n_clienti),
+        "simulated_clients": int(scored["cliente"].nunique()),
         "alerts_per_client_year": carico["alert_per_cliente_anno"],
         "share_resolved_by_contact": carico["quota_contatto"],
         "share_escalated_to_bank": carico["quota_banca"],
@@ -139,11 +152,14 @@ def stats() -> dict:
             data = json.load(f)
         if data.get("engine_version") == __version__ and "stats" in data:
             return data["stats"]
-    return _calibrate()
+    # No pre-computed data: a lighter run (one small book each) keeps the start-up fast.
+    return _calibrate(seeds_detection=[SEED_CALIBRAZIONE], seeds_load=[SEED_CALIBRAZIONE + 100],
+                      n_clienti=150)
 
 
 def threshold() -> float:
-    return float(stats()["threshold"])
+    """The engine threshold, fixed in sentinel/model.py (calibrated in notebooks/calibrazione.ipynb)."""
+    return float(model.SOGLIA)
 
 
 # ---------------------------------------------------------------- public functions

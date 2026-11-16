@@ -41,7 +41,7 @@ Response (fake police officer, default contact):
 ```json
 {
   "score": 0.694,
-  "threshold": 0.54,
+  "threshold": 0.5,
   "paused": true,
   "pause_origin": "score",
   "destination": "trusted_contact",
@@ -97,8 +97,8 @@ Errors: `422` invalid input (unknown channel, negative amount, both or neither o
 
 ```json
 {
-  "engine_version": "0.1.0",
-  "threshold": 0.54,
+  "engine_version": "0.2.0",
+  "threshold": 0.5,
   "response_window_minutes": 30,
   "revocation_delay_hours": 72,
   "scope": [
@@ -162,15 +162,15 @@ Request `{}` or `{"requested_at": "2026-12-17T09:00:00+01:00"}`. Response:
 
 ```json
 {
-  "threshold": 0.54,
-  "auc": 0.9903,
-  "simulated_clients": 150,
-  "alerts_per_client_year": 1.14,
-  "share_resolved_by_contact": 0.754,
-  "share_escalated_to_bank": 0.246,
-  "cost_to_serve_chf": 6.63,
-  "fraud_episodes_caught": 0.862,
-  "fraud_money_protected": 0.941,
+  "threshold": 0.5,
+  "auc": 0.9815,
+  "simulated_clients": 1800,
+  "alerts_per_client_year": 1.477,
+  "share_resolved_by_contact": 0.79,
+  "share_escalated_to_bank": 0.21,
+  "cost_to_serve_chf": 7.23,
+  "fraud_episodes_caught": 0.894,
+  "fraud_money_protected": 0.958,
   "note": "Synthetic data. Money protected is a benefit for the client and the family; the bank pays for trust, retention of senior clients and fewer complaints.",
   "cost_curve": "[{threshold, cost_chf}, …]",
   "roc_curve": "[{fpr, tpr}, …]"
