@@ -38,7 +38,10 @@ import pandas as pd
 
 GRUPPI = {"sportello": "contanti", "bancomat": "contanti", "bonifico": "bonifico", "carta": "carta"}
 
-# Weights: starting values, to calibrate in notebooks/calibrazione.ipynb (Utente 1).
+# Weights: set by design, not fitted to the synthetic data (fitting them would only learn the
+# generator's own rules). Robustness checked in notebooks/calibrazione.ipynb (16.11.2026): with
+# every weight moved by +/-30% the AUC stays 0.97-0.98. The threshold depends on the weights:
+# whenever a weight changes, recalibrate it (notebook, section 2; calibrated value today: 0.50).
 PESI: dict[str, float] = {
     "bias": -3.0,
     "importo": 4.0,             # max contribution of the amount term

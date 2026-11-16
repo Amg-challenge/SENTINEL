@@ -56,7 +56,7 @@ Five scenarios: fake police officer (cash at the counter, the hero story), fake 
 |---|---|---|---|
 | `sentinel/model.py` | Engine: **when** to involve the contact; explainable score | Utente 1 | `modello` |
 | `sentinel/workflow.py` | **Who** verifies: contact or bank; 30-minute window; 72 hours | Utente 1 | `modello` |
-| `notebooks/calibrazione.ipynb` | Calibration on public sources, ROC, sensitivity | Utente 1 | `modello` |
+| `notebooks/calibrazione.ipynb`, `results/calibration_report.md`, `results/figures/` | Calibration on public sources, threshold, ROC, sensitivity, robustness of the weights | Utente 1 | `modello` |
 | `sentinel/profiles.py` | Synthetic data: populations, legitimate behaviour, three threats, portfolio | Utente 2 | `dati-economia` |
 | `sentinel/economics.py` | Threshold, cost curve, ROC, cost to serve, link to the unit economics | Utente 2 | `dati-economia` |
 | `scripts/simula_portafoglio.py`, `results/` | Portfolio simulation and report | Utente 2 | `dati-economia` |
