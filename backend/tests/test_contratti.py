@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+import pytest  # noqa: E402
 
 from sentinel import economics, model, profiles  # noqa: E402
 from sentinel.workflow import (ATTESA_REVOCA_ORE, Contatto, decidi, destinazione_finale,  # noqa: E402
@@ -47,6 +48,14 @@ def test_portfolio_structure():
 
 
 # ---------------------------------------------------------------- model
+def test_punteggia_refuses_a_pooled_portfolio():
+    """The same-day and weekly signals look at the whole frame: one customer at a time."""
+    port = profiles.genera_portafoglio(n_clienti=3, prob_frode=0.0, seed=5)
+    assert port["cliente"].nunique() > 1
+    with pytest.raises(ValueError, match="one customer at a time"):
+        model.punteggia(port, BASE)
+
+
 def test_scores_are_probabilities_and_explainable():
     s = model.punteggia(profiles.genera_storico("anziano", seed=2), BASE)
     assert ((s >= 0) & (s <= 1)).all()
