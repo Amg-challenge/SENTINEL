@@ -26,11 +26,13 @@ function Contact() {
   const { contactName } = useCase();
   return (
     <div className="flex flex-col items-center">
-      <p className="eyebrow">Step 3</p>
-      <h1 className="mt-1 text-center text-[40px] font-bold leading-tight text-ink">
+      {/* On a real phone this heading is scaffolding that breaks the illusion,
+          and it costs the screen space the two buttons need. Wide screens keep it. */}
+      <p className="eyebrow hidden sm:block">Step 3</p>
+      <h1 className="mt-1 hidden text-center text-[40px] font-bold leading-tight text-ink sm:block">
         {contactName}'s phone
       </h1>
-      <div className="mt-8">
+      <div className="w-full sm:mt-8 sm:w-auto">
         <ContactPhone />
       </div>
     </div>
