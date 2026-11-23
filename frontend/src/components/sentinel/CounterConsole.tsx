@@ -156,14 +156,14 @@ function BottomPanel({
       return (
         <Panel tone="ok" icon={<CheckCircle2 />} className="animate-fade">
           {decidedBy === "bank"
-            ? "Approved by the bank's internal review. The teller may proceed."
+            ? "Approved by the bank after its review with the client. The teller may proceed."
             : `Confirmed by ${contactName}. The teller may proceed.`}
         </Panel>
       );
     case "blocked":
       return (
         <Panel tone="alert" icon={<Ban />} className="animate-fade">
-          <strong>Not executed.</strong> The bank's review, with the client, stopped it; suggest
+          <strong>Not executed.</strong> The bank decided after its review with the client; suggest
           contacting the police.
         </Panel>
       );

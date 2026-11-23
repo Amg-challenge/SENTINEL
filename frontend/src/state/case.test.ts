@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { fixture } from "@/test/fixtures/fallback";
-import { deriveCase } from "./case";
+import { deriveCase, inBankQueue } from "./case";
 
 const results = fixture.scenarios[0]!.results;
 
@@ -27,6 +27,23 @@ describe("case state", () => {
       state: "approved",
       decidedBy: "bank",
     });
+  });
+  it("lets the bank refuse after a stop, never the contact alone", () => {
+    expect(deriveCase(true, results.default, "stopped", "blocked")).toEqual({
+      state: "blocked",
+      decidedBy: "bank",
+    });
+    // whatever the contact answers, the contact alone never produces a final block
+    for (const d of ["confirmed", "stopped"] as const) {
+      expect(deriveCase(true, results.default, d, undefined).state).not.toBe("blocked");
+    }
+  });
+  it("puts stopped, conflicted and unanswered cases in the bank queue", () => {
+    expect(inBankQueue(results.default, undefined)).toBe(false);
+    expect(inBankQueue(results.default, "confirmed")).toBe(false);
+    expect(inBankQueue(results.default, "stopped")).toBe(true);
+    expect(inBankQueue(results.contact_has_power_of_attorney, undefined)).toBe(true);
+    expect(inBankQueue(results.contact_did_not_answer_30min, undefined)).toBe(true);
   });
   it("marks an unanswered case as expired and with the bank", () => {
     expect(deriveCase(true, results.contact_did_not_answer_30min, undefined, undefined).state).toBe(

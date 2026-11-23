@@ -14,11 +14,25 @@ cloud & infrastructure (base)    30.0   40.0   60.0    80.0    90.0
 compliance, security & legal     70.0   70.0   90.0   110.0   120.0
 sales & commercial               60.0   80.0  100.0   120.0   140.0
 total                           500.0  600.0  900.0  1200.0  1400.0
+personnel share %                52.0   55.0   62.0    66.0    67.0
+loaded cost per FTE              65.0   73.3   93.3    98.8   104.4
 FTE                               4.0    4.5    6.0     8.0     9.0
 
-Net burn over the first 18 months: CHF 768,775 (≈ CHF 42,710 a month)
+Cumulative EBITDA loss, months 1-18: CHF 768,775 (≈ CHF 42,710 a month)
+  = cumulative EBITDA loss of months 1-18. Taken as the cash need: the model has no capex (software is expensed), no income tax (losses), VAT is neutral; receivables at 30 days would add only about one month of revenue (< CHF 10k).
+
+Use of funds, months 1-18 (gross spending CHF 851,025; funded by the CHF 800,000 pre-seed + CHF 82,250 pilot revenue; left: CHF 31,225)
+  team                             CHF   425,000    50%
+  product, cloud and service       CHF   221,025    26%
+  compliance, security and legal   CHF   105,000    12%
+  sales and commercial             CHF   100,000    12%
 Break-even (year-5 fixed costs / contribution): 60,870 clients ≈ 19 banks at maturity
 One bank at maturity: 3,200 clients, revenue CHF 96,000, contribution CHF 73,600, LTV/CAC 7.4x, payback 16.3 months
+
+Alternative · market salaries from year 3 (CHF 120k loaded per FTE)
+  fixed costs (k): [500, 600, 1060, 1370, 1540]
+  EBITDA (k): [-504, -529, -848, -969, -960]; cumulative 5 years: CHF -3.81 m (base -3.34 m)
+  break-even: 66,957 clients ≈ 21 mature banks; the first 18 months do not change
 
 Appendix A3 · per bank and after five years
                      prudent      base  optimistic
