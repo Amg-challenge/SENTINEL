@@ -2,15 +2,15 @@
 
 > When the bank sees something strange, it calls the right person: the one you trust.
 
-Sentinel is a white-label module for banks. A person **chooses** to activate it and names a **trusted contact**. When an unusual operation happens - cash at the counter, a safe deposit box visit, a transfer to a new or foreign account - it is put **on hold** until the contact confirms or blocks it. Sentinel **does not replace the bank's antifraud system** (e.g. NetGuardians): it receives its alerts and adds the missing link, the verification by a person who really knows the client.
+Sentinel is a white-label module for banks. A person **chooses** to activate it and names a **trusted contact**. When an unusual operation happens - cash at the counter, a safe deposit box visit, a transfer to a new or foreign account - it is put **on hold** until the contact confirms it. If the contact stops it, the case goes to the bank, which speaks with the client and decides: the contact has no final veto. Sentinel **does not replace the bank's antifraud system** (e.g. NetGuardians): it receives its alerts and adds the missing link, the verification by a person who really knows the client.
 
 Product rules implemented in the code (document v6):
 
 - **Consent first:** nothing happens without the person's explicit activation.
-- **The contact never sees the account:** they can only approve or block the flagged operation.
+- **The contact never sees the account:** they can only confirm the flagged operation, or stop it and ask the bank to check (`workflow.esito_contatto`). A stop is not a veto: the bank decides with the client.
 - **Conflict of interest:** if the contact initiated the operation, benefits from it, holds a power of attorney or co-holds the account, they cannot approve it - the case goes to the bank (`sentinel/workflow.py`).
 - **Response window:** if the contact does not answer within 30 minutes, the bank takes over.
-- **Anti-coercion:** switching Sentinel off or changing the rules takes effect only after **72 hours**, and the contact is told at once.
+- **Anti-coercion (proposed rule):** switching Sentinel off or changing the rules takes effect only after **72 hours**, and the contact is told at once. Whether a delay on revoking the client's instruction is legally valid must be agreed with the bank and its lawyers.
 - **Scope:** cash, safe deposit box and transfers. Card payments stay with the bank's card antifraud.
 
 The prototype builds on the first version written by Stefano (interface, workflow, scoring formula), extended with the v6 features (channels, safe deposit box, power of attorney, foreign transfers) and a portfolio simulation that measures the numbers used in the pitch.
@@ -44,7 +44,7 @@ The pitch demo now lives in `../frontend/` (React). The Streamlit app stays as a
 |---|---|
 | 1 · Protected person | Consent, choice of the contact, what the contact can and cannot do, 72-hour delay on revocation |
 | 2 · Bank counter | The operation on hold, the score and **why** it was paused |
-| 3 · Trusted contact | The notification on the phone, approve / block, 30-minute window |
+| 3 · Trusted contact | The notification on the phone, confirm / stop and ask the bank, 30-minute window |
 | 4 · Bank case queue | Conflict-of-interest and unanswered cases |
 | Appendix · Analysis | Cost curve, ROC, operational load, three populations |
 
@@ -110,13 +110,13 @@ unit_economics_banca(scenario, cost_to_serve) -> dict                    # v6, p
 4. To change a signature: agree in the group first, then change it together with its test.
 5. One source of truth for the pitch: the documents in `../pitch/`.
 
-## Simulation results (threshold 0.50, updated 16.11.2026)
+## Simulation results (threshold 0.50, updated 23.11.2026)
 
 | | Simulation | v6 assumption |
 |---|---|---|
 | Alerts per client per year | 1.48 (range 1.48 - 1.58) | ~1.5 |
-| Escalated to the bank | 21% (21 - 22%) | ~20% |
-| Cost to serve per client per year | CHF 7.23 (CHF 7.23 - 7.70) | CHF 7 |
+| Escalated to the bank (conflict, no answer, or stopped by the contact) | 21% (21 - 23%) | ~20% |
+| Cost to serve per client per year | CHF 7.28 (CHF 7.28 - 7.86) | CHF 7 |
 | Bank's LTV/CAC, base scenario | 7.3x | 7.4x |
 | Fraud episodes caught / money protected (synthetic data) | 89% / 96% | — |
 

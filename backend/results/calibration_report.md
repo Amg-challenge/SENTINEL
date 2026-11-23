@@ -4,7 +4,7 @@
 
 ## In one paragraph
 
-The decision engine has been checked against public Swiss sources and recalibrated on 1,800 simulated seniors. The cost-optimal threshold is **0.50**: the bootstrap range is 0.46–0.50, while the API currently uses 0.54. At 0.50 the simulation reproduces the operational assumptions of the business model (v6): **1.5 alerts per client per year, 21% escalated to the bank, cost to serve CHF 7.2**. The fraud amounts in the code are lower than those reported by the police, so detection figures are conservative. The score keeps its ranking quality when every weight is moved by ±30%. A black-box model (Isolation Forest) ranks as well (similar AUC) but cannot say why it paused an operation. **All of this is on synthetic data generated with the same logic as the engine, so the AUC is partly circular: it is not evidence that the engine works on real clients.** AUC measures ranking, not accuracy.
+The decision engine has been checked against public Swiss sources and recalibrated on 1,800 simulated seniors. The cost-optimal threshold is **0.50**: the bootstrap range is 0.46–0.50. Since 16.11.2026 the engine, the API, the simulations and the demo all use **0.50** (`model.SOGLIA`); 0.54 was the earlier API value, recalibrated on a single book of 150 customers. At 0.50 the simulation reproduces the operational assumptions of the business model (v6): **1.5 alerts per client per year, 21% escalated to the bank, cost to serve CHF 7.3**. The fraud amounts in the code are lower than those reported by the police, so detection figures are conservative. The score keeps its ranking quality when every weight is moved by ±30%. A black-box model (Isolation Forest) ranks as well (similar AUC) but cannot say why it paused an operation. **All of this is on synthetic data generated with the same logic as the engine, so the AUC is partly circular: it is not evidence that the engine works on real clients.** AUC measures ranking, not accuracy.
 
 ## 1. Assumptions vs public sources
 
@@ -26,18 +26,20 @@ The decision engine has been checked against public Swiss sources and recalibrat
 | One book of 300 customers (6 seeds) | 0.54, 0.50, 0.46, 0.48, 0.50, 0.46 |
 | **Pooled book, 1,800 customers (526 fraud episodes)** | **0.50** |
 | Bootstrap over customers, 5%–95% | 0.46–0.50 |
-| API today (one book of 150 customers) | 0.54 |
+| API before 16.11.2026 (one book of 150 customers) | 0.54 — replaced by 0.50 |
 
 What the threshold means for the bank and for the client. The operational load is measured on 900 customers at an assumed prevalence of 1% (customers with a material fraud episode a year), and detection on the pooled book:
 
 | Threshold | Alerts/client/year | To the bank | Cost to serve CHF | Fraud episodes caught | Fraud money protected | Expected cost CHF/client |
 |---|---|---|---|---|---|---|
-| 0.46 | 1.88 | 21% | 8.68 | 92% | 97% | 12.87 |
-| 0.48 | 1.67 | 21% | 7.89 | 91% | 97% | 12.94 |
-| **0.50** | **1.48** | **21%** | **7.23** | **89%** | **96%** | **12.75** |
-| 0.54 | 1.16 | 20% | 5.87 | 84% | 92% | 16.25 |
+| 0.46 | 1.88 | 21% | 8.71 | 92% | 97% | 12.87 |
+| 0.48 | 1.67 | 21% | 7.94 | 91% | 97% | 12.94 |
+| **0.50** | **1.48** | **21%** | **7.28** | **89%** | **96%** | **12.75** |
+| 0.54 | 1.16 | 20% | 5.90 | 84% | 92% | 16.25 |
 
-**Sensitivity.** Optimal threshold by cost per false alarm and real prevalence:
+Two different costs, not to be confused. **CHF 5 per false alarm** is a *weight* for the nuisance of disturbing the client and the contact without reason: it is used only to choose the threshold (expected cost column). The **cash** costs of the service are CHF 0.50 per notification confirmed by the contact and CHF 15 per case reviewed by the bank (conflicts, no answer, or stopped by the contact); they give the cost to serve. Since 23.11.2026 a contact's stop is not a veto: real frauds stopped by the contact also go to the bank's review, which raises the cost to serve from CHF 7.23 to 7.28.
+
+**Sensitivity.** Optimal threshold by cost per false alarm (nuisance weight) and prevalence:
 
 | Cost per false alarm | prevalence 0.5% | 1% | 2% |
 |---|---|---|---|
@@ -60,7 +62,7 @@ What the threshold means for the bank and for the client. The operational load i
 
 - Figure: `results/figures/why_paused.png`. The score is a starting point plus one contribution per signal: the same reasons appear at the counter, on the contact's phone and in the bank queue.
 - **AUC 0.98 is not accuracy:** it measures ranking on synthetic data we generated (partly circular). An Isolation Forest ranks as well, but only Sentinel says why.
-- **Threshold chosen by cost, not by accuracy:** CHF 5 per disturbance vs money lost. At 0.50: 1.5 alerts per client per year, 89% of episodes caught (96% of the money), about 1 in 10 missed; at a 1% prevalence almost every alert is a false alarm.
+- **Threshold chosen by cost, not by accuracy:** CHF 5 per disturbance (a nuisance weight, not a cash cost) vs money lost. At 0.50: 1.5 alerts per client per year, 89% of episodes caught (96% of the money), about 1 in 10 missed; at a 1% prevalence almost every alert is a false alarm.
 - **Sensitivity, not validation:** with every weight moved by ±30%, the AUC stays at 0.97–0.98 on the same data. Validation on real data, monitoring and independent review (FINMA Guidance 08/2024) are the bank’s job and come with the pilot.
 - Optional second figure: `results/figures/roc.png`.
 
@@ -70,9 +72,9 @@ Say it on stage as *"synthetic data, to be confirmed in a pilot"*.
 
 | For | What | Status |
 |---|---|---|
-| Group | Adopt **0.50** as the engine threshold (the API today recalibrates on 150 customers and gets 0.54). `/stats` and the offline data change; none of the 5 demo scenarios changes outcome | to decide |
-| Utente 2 | Re-run `simula_portafoglio.py` with the threshold fixed at 0.50, so report, demo and deck use one set of numbers; add the source-based amounts and POA 30% as sensitivity rows | to do |
-| Utente 4 | v6 can keep **CHF 7** as the cost to serve (simulated: CHF 7.2 at 0.50); appendix slide above | ready |
+| Group | Adopt **0.50** as the engine threshold (the API used to recalibrate on 150 customers and got 0.54). `/stats` and the offline data change; none of the 5 demo scenarios changes outcome | done (16.11.2026) |
+| Utente 2 | Re-run `simula_portafoglio.py` with the threshold fixed at 0.50, so report, demo and deck use one set of numbers | done (re-run 23.11.2026 with the contact's stop routed to the bank) |
+| Utente 4 | v6 can keep **CHF 7** as the cost to serve (simulated: CHF 7.3 at 0.50); appendix slide above | done |
 | Pilot | Large legitimate counter withdrawals, contacts' response time, real share of POA holders | open |
 
 ## Sources

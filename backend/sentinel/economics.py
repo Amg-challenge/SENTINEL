@@ -49,7 +49,9 @@ class ParametriCosto:
     """
 
     perdita: float = 10_000.0       # L: typical loss of a missed fraud operation (CHF)
-    costo_attrito: float = 5.0      # cost of a false alarm: friction for the contact
+    costo_attrito: float = 5.0      # weight of a false alarm (nuisance for client and contact),
+                                    # used ONLY to choose the threshold; not a cash cost
+                                    # (cash costs: ParametriServizio, CHF 0.50 / CHF 15)
     p_frode: float = 6e-5
 
 
@@ -101,7 +103,7 @@ def perdita_attesa_evitata(score_frode, soglia: float, par: ParametriCosto | Non
 class ParametriServizio:
     """Operating costs of the service, per customer (CHF)."""
 
-    costo_notifica: float = 0.50         # alert handled by the trusted contact in the app
+    costo_notifica: float = 0.50         # alert confirmed by the trusted contact in the app
     costo_revisione_banca: float = 15.0  # case escalated to the bank's manual review
     costo_base: float = 2.0              # platform and cloud, per customer per year
 
@@ -169,7 +171,10 @@ def stima_alert(scored: pd.DataFrame, soglia: float, par: ParametriServizio | No
 
     The contact/bank split is MEASURED, not assumed: every paused operation is routed
     with workflow.destinazione_finale (conflict of interest -> bank; contact who does
-    not answer within the window -> bank). Works on one customer or on a portfolio
+    not answer within the window -> bank). When the contact answers, they confirm
+    legitimate operations and stop real frauds, which then go to the bank's review
+    (workflow.esito_contatto). 'quota_contatto' = alerts closed by the contact's
+    confirmation. Works on one customer or on a portfolio
     (column 'cliente'); expects one year of operations per customer.
     """
     par = par or ParametriServizio()
@@ -178,14 +183,21 @@ def stima_alert(scored: pd.DataFrame, soglia: float, par: ParametriServizio | No
     alert = scored[_in_pausa(scored, soglia)]
     procura = (alert["contatto_procura"].astype(bool) if "contatto_procura" in alert.columns
                else pd.Series(False, index=alert.index))
-    conflitti = banca = 0
-    for (_, op), proc in zip(alert.iterrows(), procura):
+    frode = (alert["frode_reale"].astype(bool) if "frode_reale" in alert.columns
+             else pd.Series(False, index=alert.index))
+    conflitti = banca = stop = 0
+    for (_, op), proc, vera in zip(alert.iterrows(), procura, frode):
         contatto = Contatto("contatto", ha_procura=bool(proc))
         risponde = bool(rng.random() >= p_non_risposta)
         dest, motivo = destinazione_finale(op, contatto, risponde=risponde, minuti_trascorsi=30)
         if dest == "banca":
             banca += 1
             conflitti += int("did not answer" not in motivo)
+        elif vera:
+            # the contact answers and stops a real fraud: not a veto, the bank reviews it
+            # with the client (workflow.esito_contatto). Legitimate operations: confirmed.
+            banca += 1
+            stop += 1
     n = len(alert)
     alert_anno = n / n_clienti
     q_banca = banca / n if n else 0.0
@@ -195,6 +207,7 @@ def stima_alert(scored: pd.DataFrame, soglia: float, par: ParametriServizio | No
         "quota_contatto": round(1 - q_banca, 3),
         "quota_banca": round(q_banca, 3),
         "quota_banca_conflitto": round(conflitti / n, 3) if n else 0.0,
+        "quota_banca_stop_contatto": round(stop / n, 4) if n else 0.0,
         "casi_banca_per_cliente_anno": round(alert_anno * q_banca, 3),
         "costo_variabile": round(costo_var, 2),
         "cost_to_serve": round(par.costo_base + costo_var, 2),

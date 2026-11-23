@@ -2,7 +2,7 @@
 
 > When the bank sees something strange, it calls the right person: the one you trust.
 
-Sentinel is a white-label module for banks. A person **chooses** to activate it and names a **trusted contact**. When an unusual operation happens - cash at the counter, a safe deposit box visit, a transfer to a new or foreign account - it is put **on hold** until the contact confirms or blocks it. Sentinel works **on top of** the bank's antifraud system (e.g. NetGuardians) and adds the missing link: verification by a person who really knows the client.
+Sentinel is a white-label module for banks. A person **chooses** to activate it and names a **trusted contact**. When an unusual operation happens - cash at the counter, a safe deposit box visit, a transfer to a new or foreign account - it is put **on hold** until the contact confirms it. If the contact stops it, the case goes to the bank, which speaks with the client and decides: the contact has no final veto. Sentinel works **on top of** the bank's antifraud system (e.g. NetGuardians) and adds the missing link: verification by a person who really knows the client.
 
 ## Repository
 

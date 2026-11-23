@@ -12,7 +12,13 @@ CONTRACT (stable signatures):
     instrada(operazione, contatto) -> (destinazione, motivo)       # "contatto" | "banca"
     decidi(operazione, punteggio, soglia, contatto, alert_esterno=False) -> Decisione
     destinazione_finale(operazione, contatto, risponde, minuti_trascorsi=0.0, ...) -> (dest, motivo)
-    richiesta_revoca(ora=None) -> dict                              # 72-hour safety delay
+    esito_contatto(conferma) -> (esito, motivo)                     # "esegui" | "banca"
+    richiesta_revoca(ora=None) -> dict                              # proposed 72-hour safety delay
+
+What the trusted contact can do (decided 23.11.2026): the contact is consulted because
+the client instructed the bank to do so. "Confirm" releases the hold; "stop" is NOT a
+final veto: it keeps the operation on hold and sends the case to the bank, which speaks
+with the client and takes the final decision.
 """
 from __future__ import annotations
 
@@ -96,11 +102,24 @@ def destinazione_finale(operazione, contatto: Contatto, risponde: bool,
     return dest, motivo
 
 
+def esito_contatto(conferma: bool) -> tuple[str, str]:
+    """What happens after the trusted contact has answered.
+
+    "Confirm" releases the hold the client asked for: the bank may execute the
+    operation. "Stop" is not a veto: the operation stays on hold and goes to the bank,
+    which speaks with the client and decides (the money remains the client's).
+    """
+    if conferma:
+        return "esegui", "the trusted contact confirmed it"
+    return "banca", "the trusted contact stopped it and asked the bank to check with the client"
+
+
 def richiesta_revoca(ora: datetime | None = None) -> dict:
     """Deactivation or rule change: effective only after 72 hours, contact notified at once.
 
     This is what stops a fraudster from having the protection switched off during
-    the phone call.
+    the phone call. It is a PROPOSED service rule: whether and how a delay on revoking
+    the client's instruction is valid must be agreed with the bank and its lawyers.
     """
     ora = ora or datetime.now()
     return {"richiesta": ora, "effettiva_dal": ora + timedelta(hours=ATTESA_REVOCA_ORE),

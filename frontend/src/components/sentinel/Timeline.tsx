@@ -11,7 +11,9 @@ export function Timeline() {
   const active =
     view.state === "waiting_contact"
       ? 1
-      : view.state === "with_bank" || view.state === "expired"
+      : view.state === "with_bank" ||
+          view.state === "expired" ||
+          view.state === "stopped_by_contact"
         ? 2
         : view.state === "inactive" || view.state === "proceed"
           ? -1

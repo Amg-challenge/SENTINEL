@@ -1,4 +1,4 @@
-import { AlertTriangle, Ban, CheckCircle2, Clock, Inbox, Landmark, Lock, TimerOff } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Inbox, Landmark, Lock, TimerOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { Channel } from "@/lib/api";
@@ -18,7 +18,8 @@ const NOUN: Record<Channel, string> = {
 
 export function ContactPhone() {
   const demo = useCase();
-  const { scenario, ev, view, decide, scenarioId, revocation, config, revocationHours } = demo;
+  const { scenario, ev, view, decide, scenarioId, revocation, config, revocationHours, decisions } = demo;
+  const stoppedByMe = decisions[scenarioId] === "stopped";
   const pending = view.state === "waiting_contact";
   const hoursLeft =
     revocation && config ? Math.max(0, config.revocation_delay_hours - revocationHours) : 0;
@@ -58,7 +59,7 @@ export function ContactPhone() {
               <p className="text-sm text-subtle">Mendrisio branch · just now</p>
               <Message text={scenario.phone_message} />
               <p className="mt-3 text-base font-semibold text-ink">
-                Have you spoken to him? Do you approve?
+                Have you spoken to him? Confirm it, or stop it and ask the bank to check.
               </p>
             </div>
             <ul className="mt-4 space-y-2.5 text-[15px] text-ink-2">
@@ -76,28 +77,38 @@ export function ContactPhone() {
                 variant="alert"
                 size="xl"
                 className="w-full"
-                onClick={() => decide(scenarioId, "blocked")}
+                onClick={() => decide(scenarioId, "stopped")}
               >
-                Block
+                Stop · ask the bank to check
               </Button>
               <Button
                 variant="quiet"
                 size="xl"
                 className="w-full"
-                onClick={() => decide(scenarioId, "approved")}
+                onClick={() => decide(scenarioId, "confirmed")}
               >
-                I spoke to him, approve
+                I spoke to him, confirm
               </Button>
             </div>
           </div>
-        ) : view.state === "blocked" && view.decidedBy === "contact" ? (
+        ) : view.state === "stopped_by_contact" ? (
           <Done
-            icon={<Ban className="h-8 w-8" />}
+            icon={<Landmark className="h-8 w-8" />}
             tone="alert"
-            text={`You blocked the ${NOUN[ev?.operation.channel ?? "counter"]}. Call your father.`}
+            text={`The ${NOUN[ev?.operation.channel ?? "counter"]} is on hold. The bank will speak to your father. Call him too.`}
+          />
+        ) : stoppedByMe && view.decidedBy === "bank" ? (
+          <Done
+            icon={<Landmark className="h-8 w-8" />}
+            tone={view.state === "approved" ? "ok" : "alert"}
+            text={
+              view.state === "approved"
+                ? "The bank spoke to your father and let it go ahead."
+                : "The bank spoke to your father and did not execute it."
+            }
           />
         ) : view.state === "approved" && view.decidedBy === "contact" ? (
-          <Done icon={<CheckCircle2 className="h-8 w-8" />} tone="ok" text="You approved it." />
+          <Done icon={<CheckCircle2 className="h-8 w-8" />} tone="ok" text="You confirmed it." />
         ) : view.state === "expired" ? (
           <Empty
             icon={<TimerOff className="h-7 w-7" />}

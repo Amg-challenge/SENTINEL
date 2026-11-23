@@ -1,6 +1,6 @@
 {
   "engine_version": "0.2.0",
-  "generated_at": "2026-11-16T11:30:14+00:00",
+  "generated_at": "2026-11-23T10:53:58+00:00",
   "config": {
     "engine_version": "0.2.0",
     "threshold": 0.5,
@@ -517,9 +517,9 @@
     "auc": 0.9815,
     "simulated_clients": 1800,
     "alerts_per_client_year": 1.477,
-    "share_resolved_by_contact": 0.79,
-    "share_escalated_to_bank": 0.21,
-    "cost_to_serve_chf": 7.23,
+    "share_resolved_by_contact": 0.788,
+    "share_escalated_to_bank": 0.212,
+    "cost_to_serve_chf": 7.28,
     "fraud_episodes_caught": 0.894,
     "fraud_money_protected": 0.958,
     "cost_curve": [

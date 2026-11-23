@@ -12,10 +12,20 @@ describe("case state", () => {
   it("waits for the trusted contact", () => {
     expect(deriveCase(true, results.default, undefined, undefined).state).toBe("waiting_contact");
   });
-  it("shows the contact's block", () => {
-    expect(deriveCase(true, results.default, "blocked", undefined)).toEqual({
-      state: "blocked",
+  it("releases the hold when the contact confirms", () => {
+    expect(deriveCase(true, results.default, "confirmed", undefined)).toEqual({
+      state: "approved",
       decidedBy: "contact",
+    });
+  });
+  it("sends a contact's stop to the bank: not a veto", () => {
+    expect(deriveCase(true, results.default, "stopped", undefined)).toEqual({
+      state: "stopped_by_contact",
+      decidedBy: "contact",
+    });
+    expect(deriveCase(true, results.default, "stopped", "approved")).toEqual({
+      state: "approved",
+      decidedBy: "bank",
     });
   });
   it("marks an unanswered case as expired and with the bank", () => {

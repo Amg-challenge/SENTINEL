@@ -20,7 +20,7 @@ export const Route = createFileRoute("/appendix")({
   head: () =>
     pageHead(
       "How the engine is calibrated",
-      "Alerts per client, share resolved by the contact, cost curve and ROC curve on synthetic data.",
+      "Alerts per client, share confirmed by the contact, cost curve and ROC curve on synthetic data.",
     ),
   component: AppendixPage,
 });
@@ -44,7 +44,7 @@ function Appendix() {
 
   const tiles = [
     { label: "Alerts per client per year", value: num.format(stats.alerts_per_client_year) },
-    { label: "Resolved by the contact", value: formatPercent(stats.share_resolved_by_contact) },
+    { label: "Confirmed by the contact", value: formatPercent(stats.share_resolved_by_contact) },
     { label: "Escalated to the bank", value: formatPercent(stats.share_escalated_to_bank) },
     { label: "Cost to serve (CHF/client/year)", value: num.format(stats.cost_to_serve_chf) },
     { label: "Fraud money protected", value: formatPercent(stats.fraud_money_protected) },

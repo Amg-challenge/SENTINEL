@@ -233,7 +233,7 @@ def rapporto(df: pd.DataFrame) -> str:
 | What to say | Number | v6 | Source in this report |
 |---|---|---|---|
 | Alerts per protected client per year | **{b['alerts/client/year']:.1f}** | ~1.5 | §2 |
-| Resolved by the trusted contact / escalated to the bank | **{b['resolved by contact']:.0%} / {b['to the bank']:.0%}** | ~80% / ~20% | §2 |
+| Confirmed by the trusted contact / escalated to the bank | **{b['resolved by contact']:.0%} / {b['to the bank']:.0%}** | ~80% / ~20% | §2 |
 | Cost to serve per client per year | **CHF {cts:.2f}** (range CHF {r['cost to serve CHF'][0]:.1f}–{r['cost to serve CHF'][1]:.1f}) | CHF 7 | §2–3 |
 | Bank's LTV/CAC, base scenario | **{ub['LTV/CAC simulated']:.1f}×** | 7.4× | §5 |
 | CAC payback, base scenario | **{ub['CAC payback months simulated']:.0f} months** | 16 months | §5 |
@@ -251,7 +251,7 @@ How to present them:
 | Indicator | Simulation | v6 assumption |
 |---|---|---|
 | Alerts per client per year | **{b['alerts/client/year']:.2f}** | ~1.5 |
-| Resolved by the trusted contact | **{b['resolved by contact']:.0%}** | ~80% |
+| Confirmed by the trusted contact | **{b['resolved by contact']:.0%}** | ~80% |
 | Escalated to the bank | **{b['to the bank']:.0%}** (conflict of interest: {b['to the bank for conflict of interest']:.0%} of alerts) | ~20% |
 | Bank cases per client per year | {b['bank cases/client/year']:.2f} | — |
 | Cost to serve per client per year | **CHF {cts:.2f}** | CHF 7 |
@@ -315,7 +315,7 @@ Same adoption, price and CAC as v6; only the cost to serve changes (simulated: C
 - **Operational load:** 3 books × 300 seniors at an assumed fraud prevalence of 1% (clients with a material fraud episode a year) (seeds 100–102).
 - **Fraud stopped:** 6 books × 300 seniors with frauds oversampled to 30% (seeds 0–5).
 - **Two years per customer:** year 1 teaches the engine their habits, year 2 is counted.
-- **Routing:** every paused operation is routed with `workflow.destinazione_finale`, with 15% of contacts not answering within 30 minutes.
+- **Routing:** every paused operation is routed with `workflow.destinazione_finale`, with 15% of contacts not answering within 30 minutes. When the contact answers, they confirm legitimate operations and stop real frauds; a stop is not a veto, so those cases also go to the bank's review (`workflow.esito_contatto`).
 - **Service costs:** CHF 0.50 per notification, CHF 15 per bank review, CHF 2 platform cost per client per year.
 
 These are the same books used by the API's `/stats` and by `notebooks/calibrazione.ipynb`.

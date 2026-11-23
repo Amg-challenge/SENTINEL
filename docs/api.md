@@ -166,9 +166,9 @@ Request `{}` or `{"requested_at": "2026-12-17T09:00:00+01:00"}`. Response:
   "auc": 0.9815,
   "simulated_clients": 1800,
   "alerts_per_client_year": 1.477,
-  "share_resolved_by_contact": 0.79,
-  "share_escalated_to_bank": 0.21,
-  "cost_to_serve_chf": 7.23,
+  "share_resolved_by_contact": 0.788,
+  "share_escalated_to_bank": 0.212,
+  "cost_to_serve_chf": 7.28,
   "fraud_episodes_caught": 0.894,
   "fraud_money_protected": 0.958,
   "note": "Synthetic data. Money protected is a benefit for the client and the family; the bank pays for trust, retention of senior clients and fewer complaints.",
@@ -176,6 +176,8 @@ Request `{}` or `{"requested_at": "2026-12-17T09:00:00+01:00"}`. Response:
   "roc_curve": "[{fpr, tpr}, …]"
 }
 ```
+
+`share_resolved_by_contact` keeps its name for compatibility; it means **alerts closed by the trusted contact's confirmation**. Everything else goes to the bank (`share_escalated_to_bank`): conflicts of interest, no answer within 30 minutes, and operations the contact stopped. A contact's stop is not a veto: the bank speaks with the client and decides (`workflow.esito_contatto`). The decision itself is held by the front-end; the API stays stateless.
 
 ## Keeping things in sync
 

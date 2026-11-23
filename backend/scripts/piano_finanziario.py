@@ -26,7 +26,19 @@ SETUP_FEE = 25_000                 # one-off per bank
 SETUP_FEE_PILOTA = 10_000          # reduced setup fee for the pilot bank, in exchange for data and a case study
 COSTO_SERVIZIO = 7.0               # CHF per client per year (simulation: 7.23)
 INTEGRAZIONE_PER_BANCA = 20_000    # one-off integration cost per new bank (covered by the setup fee)
-COSTI_FISSI = [500_000, 600_000, 900_000, 1_200_000, 1_400_000]   # team, cloud, compliance, sales (CAC inside)
+COSTI_FISSI = [500_000, 600_000, 900_000, 1_200_000, 1_400_000]   # v6 totals: team, product, compliance, sales
+
+# Our breakdown of the v6 totals (planning assumption, 23.11.2026; v6 gives only the totals).
+# Personnel = fully loaded cost (salary + social charges); founders below market in years 1-2.
+FTE = [4, 4.5, 6, 8, 9]
+COMPONENTI_FISSI = {
+    "personnel":                     [260_000, 330_000, 560_000, 790_000, 940_000],
+    "tech development & maintenance": [80_000, 80_000, 90_000, 100_000, 110_000],   # external security review, tools, licences
+    "cloud & infrastructure (base)":  [30_000, 40_000, 60_000, 80_000, 90_000],     # environments, backups, monitoring; per-client platform cost is variable (CHF 2 inside the CHF 7)
+    "compliance, security & legal":   [70_000, 70_000, 90_000, 110_000, 120_000],   # contracts, data protection, bank audits, insurance
+    "sales & commercial":             [60_000, 80_000, 100_000, 120_000, 140_000],  # travel, events, materials; with sales staff this is the CAC
+}
+assert all(sum(c[i] for c in COMPONENTI_FISSI.values()) == COSTI_FISSI[i] for i in range(5)), "breakdown must add up to v6"
 
 
 def clienti_fine_anno() -> list[int]:
@@ -83,6 +95,12 @@ if __name__ == "__main__":
     print("CHF thousand (clients in units)")
     print(k.to_string(index=False))
     burn_18 = -(df.loc[0, "ebitda"] + df.loc[1, "ebitda"] / 2)
+    print("\nFixed costs, CHF thousand (our breakdown of the v6 totals)")
+    comp = pd.DataFrame(COMPONENTI_FISSI, index=[f"Y{i}" for i in range(1, 6)]).T / 1000
+    comp.loc["total"] = comp.sum()
+    comp.loc["FTE"] = FTE
+    print(comp.round(1).to_string())
+    comp.round(1).to_csv("results/fixed_costs.csv")
     print(f"\nNet burn over the first 18 months: CHF {burn_18:,.0f} (≈ CHF {burn_18 / 18:,.0f} a month)")
     contrib = PREZZO_ANNO - COSTO_SERVIZIO
     print(f"Break-even (year-5 fixed costs / contribution): {COSTI_FISSI[-1] / contrib:,.0f} clients "

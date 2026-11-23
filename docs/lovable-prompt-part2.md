@@ -1,3 +1,5 @@
+> **Historical document (12.11.2026).** This is the prompt used to generate the first version of the front-end. Values in it are out of date: the engine threshold is now **0.50** (`backend/sentinel/model.py`), and the trusted contact *confirms* or *stops and asks the bank to check* (no final veto). The current behaviour is in `frontend/` and `docs/api.md`.
+
 Create the file `public/demo-fallback.json` with **exactly** the JSON below (copy it verbatim, do not reformat values, do not add or remove fields). The app must load it as described in §6 of my previous message, and it must work fully on this file when `VITE_API_URL` is not set — which is the case here in Lovable.
 
 After creating it, check that:
