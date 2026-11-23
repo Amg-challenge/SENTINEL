@@ -18,16 +18,16 @@ Each person presents the part they built (Team slide): [Name 1] decision engine 
 |---|---|---|---|---|
 | 1 | Title | [Name 4] | 0:15 | “When the bank sees something unusual, it calls the right person: the one you trust.” |
 | 2 | Problem | [Name 4] | 1:00 | The payment is authorised by the client; under pressure, the client confirms it. |
-| 3 | Solution | [Name 4] | 0:45 | The client chooses, Sentinel pauses, the trusted contact decides; the bank when there is a conflict or no answer. |
+| 3 | Solution | [Name 4] | 0:45 | The client chooses, Sentinel pauses, the trusted contact confirms or stops; the bank when there is a conflict, no answer, or the client insists. |
 | 4 | Market | [Name 2] | 0:40 | Switzerland is the launch pad; the venture size is in DACH. |
 | 5 | Product: live demo | [Name 3] (drives and narrates) | 1:30 | See §2. |
 | 6 | Business model | [Name 2] | 0:50 | The bank pays CHF 2.50 per client per month for trust, not for the money saved. |
 | 7 | Go-to-market | [Name 2] | 0:35 | One pilot bank in Ticino, then the sister banks. |
-| 8 | Traction | [Name 1] | 0:40 | The simulated bank confirms the plan: 1.5 alerts, 21% to the bank, CHF 7.2. |
-| 9 | Competition | [Name 1] | 0:50 | KBC proved the idea; we make it a product for every bank, with the counter and internal abuse covered. |
+| 8 | Prototype and early validation | [Name 1] | 0:40 | A live prototype; the simulated bank shows the plan is consistent (1.5 alerts, 21% to the bank, CHF 7.2) — the pilot must prove it. |
+| 9 | Competition | [Name 1] | 0:50 | KBC runs the idea at scale; we make it a ready module for every bank, with the counter, the safe box and internal abuse covered. |
 | 10 | Team | [Name 1] | 0:25 | Four people, one part of the product each. |
 | 11 | Financials | [Name 4] | 0:45 | J-curve; break-even at about 60,000 clients, with DACH. |
-| 12 | The ask | [Name 4] | 0:35 | CHF 800,000 pre-seed, 18 months, three milestones. |
+| 12 | The ask | [Name 4] | 0:35 | CHF 800,000 pre-seed to run the 500-client pilot, 18 months, three milestones. |
 | 13 | Closing | [Name 4] | 0:20 | “We are looking for a Ticino bank for a 500-client pilot.” |
 | | **Total** | | **9:10** | |
 
@@ -66,14 +66,14 @@ Answers in two or three sentences. **Owner** is who answers first; *A1–A8* are
 | Is 8% adoption realistic? | It is our main uncertainty, and the pilot measures it first. The model works above about 3% (LTV/CAC ≥ 3×); a 12-month payback needs about 11%. | [Name 2] · A3 |
 | Why not charge the client or the family? | The bank owns the relationship and the channel (app, counter). A direct family plan is an option, not the base case. | [Name 2] · A7 |
 | What does it cost you per client? | About CHF 7 a year, measured by simulating the whole process: CHF 2 platform, 0.6 notifications, 4.6 bank reviews. Never above about CHF 11 in our stress tests, against a CHF 30 price. | [Name 2] · A2 |
-| When do you break even? | At about 60,000 clients (≈ 19 banks), in years 6–7, with Germany and Austria. Each funding round is tied to a milestone. | [Name 4] · 11 |
+| When do you break even? | At about 60,000 clients (≈ 19 mature banks), not before years 7–8, with Germany and Austria. Each funding round is tied to a milestone. | [Name 4] · 11 |
 | What do investors get, and who could buy you? | Exposure to a regulated, sticky B2B niche. Natural acquirers: antifraud and core-banking vendors that want the module for their banks. | [Name 4] · 12 |
 
 ### Competition
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| KBC already does this: why would banks not build it? | Large banks can; mid-sized and small banks lack the resources, and they are our market. KBC covers digital transfers only, and if the guardian does not answer the payment goes through. | [Name 1] · 9 |
-| What if KBC or Vyntra (ex-NetGuardians) offers it? | KBC says other organisations are interested, so speed matters: we want to be first in Switzerland, with the counter, the safe deposit box and internal abuse covered. We see Vyntra as a partner and channel, not a rival. | [Name 1] · A6 |
+| KBC already does this: why would banks not build it? | Large banks can; mid-sized and small banks lack the resources, and they are our market. KBC’s Guardian Angel works on transfers in its app, flagged by its own fraud system; according to KBC’s FAQ, without an answer the transfer can still go ahead after a waiting period. Sentinel adds the counter and the safe deposit box, a conflict-of-interest rule and the bank after 30 minutes. | [Name 1] · 9 |
+| What if KBC or Vyntra (ex-NetGuardians) offers it? | KBC offers the concept to other financial institutions on request, so speed matters: we want to be first in Switzerland, with the counter, the safe deposit box and internal abuse covered. We see Vyntra as a partner and channel, not a rival. | [Name 1] · A6 |
 | What is your moat? | Honestly none today. Switching costs (integration, contacts and rules already set) and scale (integration and compliance spread over many banks) come with adoption. | [Name 1] · 9 |
 
 ### Product and technology
@@ -83,16 +83,19 @@ Answers in two or three sentences. **Owner** is who answers first; *A1–A8* are
 | What if the trusted contact is the abuser? | If they initiated the operation, benefit from it, hold a power of attorney or are co-holder, they are never asked: the bank decides. They never see the balance and cannot move money. | [Name 3] · A4 |
 | The client waits 30 minutes at the counter? | Most contacts answer in minutes; after 30 minutes the bank decides, and nothing is approved by default. In the pilot we would also let the branch send a case to the bank’s review at once. | [Name 3] · A4 |
 | What if the scammer makes the victim switch Sentinel off? | It takes 72 hours and the contact is told immediately (tested: active at 71 h, off at 72 h). | [Name 3] · A4 |
-| Is the AI a black box? | No. Every pause comes with its reason. An Isolation Forest reaches the same accuracy on our data but cannot say why. | [Name 1] · A1 |
-| Your numbers come from synthetic data? | Yes, and we say so. The engine is calibrated on Swiss public sources (Pro Senectute 2023, cantonal police, fedpol); real data come from the pilot. | [Name 1] · A1, A8 |
+| Is the AI a black box? | No. Every pause comes with its reason. On our synthetic data an Isolation Forest ranks operations as well (similar AUC) but cannot say why. | [Name 1] · A1 |
+| An AUC of 0.98 is too good to be true? | Yes, on real data it would be. AUC measures ranking, not accuracy, and ours is measured on synthetic data generated with the same logic as the engine: it shows the engine is coherent, not that it is validated. At 0.50 it catches 89% of episodes and 96% of the money; almost every alert is a false alarm, which is why each must be cheap. | [Name 1] · A1 |
+| What does the 1% fraud rate mean? | Our assumption: 1% of protected clients have at least one material fraud episode a year. It is consistent with Pro Senectute (about 1% a year each for scams and for financial maltreatment among people 55+); we tested 0.5%–2%. | [Name 1] · A1 |
+| Your numbers come from synthetic data? | Yes, and we say so. The engine’s parameters come from Swiss public sources (Pro Senectute 2023, cantonal police, fedpol); the simulation uses the same assumptions as the business plan, so it shows consistency, not proof. Real data come from the pilot. | [Name 1] · A1, A8 |
 | How does it plug into a bank? | As a white-label module: it reads operations and the bank’s antifraud alerts through an API, and sends notifications through the bank’s app. Card payments stay with the bank’s card antifraud. | [Name 3] · 3 |
 
 ### Regulation and ethics
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| Do you need a banking licence? | No: Sentinel never receives or holds money. It is software sold to banks. | [Name 4] · A5 |
-| Banking secrecy and data protection? | Notifying a contact is based on the client’s explicit consent, given at the branch (nFADP). The contact sees only the paused operation. | [Name 4] · A5 |
-| Who is liable if the contact approves a scam? | The decision stays with the client and the person they chose; Sentinel adds a check, it does not take over the decision. Contract terms with the bank are to be defined with its compliance team (not legal advice). | [Name 4] · A5 |
+| Do you need a banking licence? | We do not expect so: Sentinel never receives or holds money, it is software sold to banks. To be confirmed with counsel. | [Name 4] · A5 |
+| Banking secrecy and data protection? | The client releases the bank from secrecy towards the contact, in writing at the branch, and asks it to hold flagged operations (nFADP, banking secrecy). The contact sees only the paused operation. | [Name 4] · A5 |
+| The contact blocks, but the client wants the money: who wins? | The client. The contact is consulted because the client asked for it; a stop holds the operation, it is not a veto. The bank talks to the client and decides after its own checks; the client can also switch Sentinel off (72 h). | [Name 3] · A4 |
+| Who is liable if the contact approves a scam? | The operation is the client’s own instruction; the contact’s “confirm” only releases the hold the client asked for, and the bank keeps its usual duties. Sentinel adds a check, it does not take over the decision. Liability between bank, Sentinel and contact is set by contract, with the contact’s liability limited — to be defined with counsel and the bank’s compliance team (not legal advice). | [Name 4] · A5 |
 | Is this paternalistic towards older people? | The client chooses: consent, their own contact and rules, no label, no age test. Switching it off is always possible, with a 72-hour safety delay. | [Name 4] · 3 |
 
 ## 4. Rehearsal plan
@@ -114,11 +117,15 @@ At each run-through, note the time per slide and the handovers that drag. Cut wo
 ## 5. Corrections to document v6 found while building the deck
 
 1. **NetGuardians is now Vyntra** (merger with Intix, June 2025). The deck says “Vyntra (ex-NetGuardians)”.
-2. **KBC Guardian Angel** was extended to over 4 million clients in 2026 after a 2,000-user pilot, and KBC says other organisations are interested. This is in the deck: it is both proof of the idea and a risk.
+2. **KBC Guardian Angel** was opened to more than 4 million Belgian clients on 15 September 2026 after a 2,000-user pilot. It is free; KBC’s fraud system (Secure4u) holds suspicious transfers, KBC phones the guardian, who sees only that transfer; according to KBC’s FAQ, without an answer the transfer goes ahead after 72 hours (another KBC page says one week). KBC offers the concept to other institutions on request. Proof of the idea and a risk: both in the deck.
 3. **FINMA reference.** The rules on outsourcing (audits, exit plan) are in Circular **2018/3**; Circular 2023/1 covers operational resilience. The deck cites both.
 4. **LTV/CAC.** v6 shows ≈15× per client (page 2) and 7.4× per bank (page 3). The deck uses only the per-bank figure, 7.4×.
 5. **Team roles.** The deck uses the parts each person actually built (engine, data and economics, interface, business), not the v6 roles (idea, technology, marketing, design). The group to confirm.
 6. **Problem figures.** Updated to Pro Senectute 2023 (CHF 675 m a year; CHF 216 m via powers of attorney or account access) and Ticino 2023 (46 scams, more than CHF 2 m, RSI).
+7. **Five-year plan (revised 23.11.2026).** v6 reached 32,000 clients in year 5, i.e. all ten banks at 8% at once, while the per-bank model needs two years to reach 8%. Rebuilt in `backend/scripts/piano_finanziario.py` with one set of assumptions: banks live from the year they sign, 4% adoption in year 1 and 8% from year 2, pilot 500 clients with a CHF 10,000 setup fee at list price, revenue on average clients, CHF 7 per client plus CHF 20,000 integration per new bank, v6 fixed costs. Result: 28,800 clients in year 5, revenue CHF 794 k, run-rate CHF 864 k (the SOM, now CHF 0.9 m instead of 1 m), cumulative loss CHF 3.34 m, break-even not before years 7–8. CAC payback is 16 months at maturity but 29 with the ramp.
+8. **The ask.** The 18-month net burn of the plan is ≈ CHF 770 k (≈ 43 k a month, not 44 k), so the 10% contingency is partly used in the base case: the real margin is about CHF 30 k. The ask is now tied explicitly to the 500-client pilot.
+9. **Pilot terms.** v6 spoke of a “reduced price”; the deck now says a reduced setup fee at the list price per client, consistent with the revenue in year 1.
+10. **Market.** The problem figures cover people 55+, the market only 65+ (conservative). “About half” for the SAM rests on the HSLU main-bank study (cantonal 28% + Raiffeisen 25%, all ages).
 
 ## 6. Cut list if the time limit is shorter
 
