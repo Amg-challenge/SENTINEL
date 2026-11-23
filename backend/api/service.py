@@ -112,8 +112,8 @@ def _calibrate(seeds_detection=range(6), seeds_load=range(100, 103), n_clienti: 
     """Statistics at the engine threshold (model.SOGLIA), computed as in notebooks/calibrazione.ipynb.
 
     - cost curve, ROC and fraud stopped: books with frauds oversampled to 30% (re-weighted to the
-      real prevalence of 1% in the cost curve);
-    - alerts, contact/bank split, cost to serve: books at the real prevalence of 1%.
+      assumed prevalence of 1% in the cost curve);
+    - alerts, contact/bank split, cost to serve: books at the assumed prevalence of 1%.
     Deterministic: same seeds, same numbers (~2 minutes; scripts/export_demo_data.py stores them)."""
     scored = pd.concat([_book(s, n_clienti, 0.30) for s in seeds_detection], ignore_index=True)
     reale = pd.concat([_book(s, n_clienti, 0.01) for s in seeds_load], ignore_index=True)

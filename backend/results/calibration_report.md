@@ -4,7 +4,7 @@
 
 ## In one paragraph
 
-The decision engine has been checked against public Swiss sources and recalibrated on 1,800 simulated seniors. The cost-optimal threshold is **0.50**: the bootstrap range is 0.46–0.50, while the API currently uses 0.54. At 0.50 the simulation reproduces the operational assumptions of the business model (v6): **1.5 alerts per client per year, 21% escalated to the bank, cost to serve CHF 7.2**. The fraud amounts in the code are lower than those reported by the police, so detection figures are conservative. The score keeps its ranking quality when every weight is moved by ±30%. A black-box model (Isolation Forest) reaches the same AUC but cannot say why it paused an operation.
+The decision engine has been checked against public Swiss sources and recalibrated on 1,800 simulated seniors. The cost-optimal threshold is **0.50**: the bootstrap range is 0.46–0.50, while the API currently uses 0.54. At 0.50 the simulation reproduces the operational assumptions of the business model (v6): **1.5 alerts per client per year, 21% escalated to the bank, cost to serve CHF 7.2**. The fraud amounts in the code are lower than those reported by the police, so detection figures are conservative. The score keeps its ranking quality when every weight is moved by ±30%. A black-box model (Isolation Forest) ranks as well (similar AUC) but cannot say why it paused an operation. **All of this is on synthetic data generated with the same logic as the engine, so the AUC is partly circular: it is not evidence that the engine works on real clients.** AUC measures ranking, not accuracy.
 
 ## 1. Assumptions vs public sources
 
@@ -28,7 +28,7 @@ The decision engine has been checked against public Swiss sources and recalibrat
 | Bootstrap over customers, 5%–95% | 0.46–0.50 |
 | API today (one book of 150 customers) | 0.54 |
 
-What the threshold means for the bank and for the client. The operational load is measured on 900 customers at the real prevalence of 1%, and detection on the pooled book:
+What the threshold means for the bank and for the client. The operational load is measured on 900 customers at an assumed prevalence of 1% (customers with a material fraud episode a year), and detection on the pooled book:
 
 | Threshold | Alerts/client/year | To the bank | Cost to serve CHF | Fraud episodes caught | Fraud money protected | Expected cost CHF/client |
 |---|---|---|---|---|---|---|
@@ -51,7 +51,7 @@ What the threshold means for the bank and for the client. The operational load i
 |---|---|
 | Each weight ±30% (one at a time) and 10 joint random draws | AUC 0.969–0.981: ranking robust. Calibrated threshold 0.28–0.64: **recalibrate whenever a weight changes**. Most sensitive: `importo` (protection) and `beneficiario_nuovo` (false alarms) |
 | Fraud amounts from the sources (scam median CHF 25k, larger POA abuse) | Episodes caught at 0.50: 97% (vs 88% with the amounts in the code); threshold 0.52 |
-| Isolation Forest, same per-person features | AUC 0.983 vs Sentinel 0.977: same accuracy, no reasons |
+| Isolation Forest, same per-person features | AUC 0.983 vs Sentinel 0.977: similar ranking, no reasons |
 | Isolation Forest, generic | AUC 0.977 |
 
 ## 4. Appendix slide for the deck (Utente 4)
@@ -59,10 +59,9 @@ What the threshold means for the bank and for the client. The operational load i
 **Title:** *Every pause comes with its reason*
 
 - Figure: `results/figures/why_paused.png`. The score is a starting point plus one contribution per signal: the same reasons appear at the counter, on the contact's phone and in the bank queue.
-- **Same accuracy as a black box:** AUC 0.98 for Sentinel and 0.98 for an Isolation Forest on the same data, but only Sentinel says why.
-- **Threshold chosen by cost, not by accuracy:** CHF 5 per disturbance vs money lost. At 0.50 there are 1.5 alerts per client per year.
-- **Robust:** with every weight moved by ±30%, the AUC stays at 0.97–0.98.
-- In line with FINMA Guidance 08/2024 on AI: governance, robustness, explainability.
+- **AUC 0.98 is not accuracy:** it measures ranking on synthetic data we generated (partly circular). An Isolation Forest ranks as well, but only Sentinel says why.
+- **Threshold chosen by cost, not by accuracy:** CHF 5 per disturbance vs money lost. At 0.50: 1.5 alerts per client per year, 89% of episodes caught (96% of the money), about 1 in 10 missed; at a 1% prevalence almost every alert is a false alarm.
+- **Sensitivity, not validation:** with every weight moved by ±30%, the AUC stays at 0.97–0.98 on the same data. Validation on real data, monitoring and independent review (FINMA Guidance 08/2024) are the bank’s job and come with the pilot.
 - Optional second figure: `results/figures/roc.png`.
 
 Say it on stage as *"synthetic data, to be confirmed in a pilot"*.

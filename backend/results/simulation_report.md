@@ -113,7 +113,7 @@ Same adoption, price and CAC as v6; only the cost to serve changes (simulated: C
 ## Method
 
 - **Threshold:** fixed at 0.50.
-- **Operational load:** 3 books × 300 seniors at the real fraud prevalence of 1% (seeds 100–102).
+- **Operational load:** 3 books × 300 seniors at an assumed fraud prevalence of 1% (clients with a material fraud episode a year) (seeds 100–102).
 - **Fraud stopped:** 6 books × 300 seniors with frauds oversampled to 30% (seeds 0–5).
 - **Two years per customer:** year 1 teaches the engine their habits, year 2 is counted.
 - **Routing:** every paused operation is routed with `workflow.destinazione_finale`, with 15% of contacts not answering within 30 minutes.

@@ -1,0 +1,22 @@
+CHF thousand (clients in units)
+ year  banks  clients_end  clients_avg  recurring_revenue  setup_fees  revenue  variable_costs  fixed_costs  costs  ebitda  run_rate_end  cumulative
+    1      1          500          0.0                8.0        10.0     18.0            22.0        500.0  522.0  -504.0          15.0      -504.0
+    2      3         4800          3.0               80.0        50.0    130.0            59.0        600.0  659.0  -529.0         144.0     -1033.0
+    3      5        12800          9.0              264.0        50.0    314.0           102.0        900.0 1002.0  -688.0         384.0     -1721.0
+    4      8        20800         17.0              504.0        75.0    579.0           178.0       1200.0 1378.0  -799.0         624.0     -2520.0
+    5     10        28800         25.0              744.0        50.0    794.0           214.0       1400.0 1614.0  -820.0         864.0     -3339.0
+
+Net burn over the first 18 months: CHF 768,775 (≈ CHF 42,710 a month)
+Break-even (year-5 fixed costs / contribution): 60,870 clients ≈ 19 banks at maturity
+One bank at maturity: 3,200 clients, revenue CHF 96,000, contribution CHF 73,600, LTV/CAC 7.4x, payback 16.3 months
+
+Appendix A3 · per bank and after five years
+                     prudent      base  optimistic
+clients_per_bank      1200.0    3200.0      6000.0
+contribution_bank    19200.0   73600.0    138000.0
+ltv_cac                  1.6       7.4        23.0
+payback_maturity_m      75.0      16.3         5.2
+payback_ramp_m          87.0      29.0        16.0
+banks_y5                 5.0      10.0        15.0
+clients_y5            5400.0   28800.0     78000.0
+run_rate_y5         129600.0  864000.0   2340000.0

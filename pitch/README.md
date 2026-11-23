@@ -21,11 +21,13 @@ Every figure comes from v6 or from the simulation (`backend/results/simulation_r
 | Resolved by the contact / to the bank | 79% / 21% | simulation |
 | Cost to serve per client per year | ≈ CHF 7 (simulated CHF 7.2) | v6 · simulation |
 | Price | CHF 2.50 per client per month, setup fee CHF 25,000 | v6 |
-| Typical bank, base scenario | 3,200 clients · CHF 96,000 revenue · LTV/CAC 7.4× · payback ≈ 16 months | v6 |
-| TAM / SAM / SOM | CHF 680 m / 27 m / 1 m a year | v6 |
-| Ask | CHF 800,000 pre-seed, 18 months | v6 |
+| Typical bank, base scenario | 4% adoption in year 1, 8% from year 2 · 3,200 clients · CHF 96,000 revenue · LTV/CAC 7.4× · payback ≈ 16 months at maturity, 29 with the ramp | v6 · `backend/scripts/piano_finanziario.py` |
+| Pilot | 500 clients, list price per client, setup fee CHF 10,000 instead of 25,000 | revised 23.11 |
+| Five years (base) | 10 banks, 28,800 clients at the end of year 5 · revenue year 5 CHF 794 k · run-rate CHF 864 k · cumulative EBITDA −CHF 3.34 m | `backend/results/financial_plan.csv` |
+| TAM / SAM / SOM | CHF 680 m / 27 m / 0.9 m a year (SOM = run-rate at the end of year 5) | v6, revised |
+| Ask | CHF 800,000 pre-seed for the 500-client pilot, 18 months, net burn ≈ CHF 770 k (≈ 43 k a month) | v6, revised |
 
-The problem and competition figures were checked online on 16 November 2026. Sources are on the deck's last appendix slide and in `pitch-script-and-qa.md` §5.
+The problem and competition figures were checked online on 16 November 2026 and again on 23 November 2026 (KBC Guardian Angel, Swiss main-bank shares, population 65+ in Germany and Austria). The five-year plan was rebuilt on 23 November so that slides 4, 6, 11, 12 and A3 follow from the same assumptions: see `pitch-script-and-qa.md` §5. Sources are on the deck's last appendix slide and in `pitch-script-and-qa.md` §5.
 
 ## Still to do (Utente 4)
 
