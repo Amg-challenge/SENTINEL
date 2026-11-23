@@ -13,7 +13,7 @@ export const Route = createFileRoute("/bank")({
   head: () =>
     pageHead(
       "Bank case queue",
-      "Cases with a conflict of interest or no answer from the contact go to the bank's internal review.",
+      "Cases with a conflict of interest, no answer, or stopped by the trusted contact go to the bank's review.",
     ),
   component: BankPage,
 });
@@ -27,7 +27,7 @@ function BankPage() {
 }
 
 function Bank() {
-  const { scenarios, evaluations, consent, bankDecisions, bankDecide, setEvaluateAll, config } =
+  const { scenarios, evaluations, consent, bankDecisions, bankDecide, setEvaluateAll, config, decisions, contact } =
     useDemo();
 
   useEffect(() => {
@@ -39,7 +39,10 @@ function Bank() {
   const rows = consent
     ? scenarios
         .map((s) => ({ s, ev: evaluations[s.id] }))
-        .filter(({ ev }) => ev?.paused && ev.destination === "bank")
+        .filter(
+          ({ s, ev }) =>
+            ev?.paused && (ev.destination === "bank" || decisions[s.id] === "stopped"),
+        )
     : [];
 
   return (
@@ -47,7 +50,8 @@ function Bank() {
       <p className="eyebrow">Step 4</p>
       <h1 className="mt-1 text-[40px] font-bold leading-tight text-ink">Bank case queue</h1>
       <p className="mt-2 text-lg text-muted-foreground">
-        Cases Sentinel never sends to the trusted contact land here.
+        Conflicts of interest, unanswered cases and operations the trusted contact stopped land
+        here. The bank speaks with the client and takes the final decision.
       </p>
 
       <section className="mt-8 sentinel-card overflow-hidden" aria-label="Cases to review">
@@ -59,7 +63,7 @@ function Bank() {
             <p className="mt-5 font-display text-2xl font-semibold text-ink">No cases in the queue.</p>
             <p className="mt-2 max-w-lg text-base text-muted-foreground">
               {consent
-                ? "Tick 'holds a power of attorney' on screen 1, or pick the internal-abuse scenario."
+                ? "Stop an operation on the contact's phone, tick 'holds a power of attorney' on screen 1, or pick the internal-abuse scenario."
                 : "Sentinel is not active: switch it on in screen 1, then tick 'holds a power of attorney' or pick the internal-abuse scenario."}
             </p>
           </div>
@@ -101,9 +105,11 @@ function Bank() {
                         {ev!.reasons.map((r) => capitalise(r.text)).join("; ") || "—"}
                       </td>
                       <td className="max-w-[280px] px-6 py-5 text-ink-2">
-                        {ev!.response_window_expired
-                          ? `No answer within ${windowMin} minutes`
-                          : capitalise(ev!.destination_reason)}
+                        {ev!.destination !== "bank"
+                          ? `${contact.name.trim() || "The trusted contact"} stopped it and asked for a check`
+                          : ev!.response_window_expired
+                            ? `No answer within ${windowMin} minutes`
+                            : capitalise(ev!.destination_reason)}
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex flex-col items-start gap-3">

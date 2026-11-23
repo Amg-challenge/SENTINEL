@@ -25,6 +25,7 @@ const MAP: Record<CaseState, { label: string; tone: "hold" | "ok" | "alert" | "i
     proceed: { label: "Proceed", tone: "ok" },
     waiting_contact: { label: "On hold", tone: "hold" },
     with_bank: { label: "With the bank", tone: "info" },
+    stopped_by_contact: { label: "Held · with the bank", tone: "hold" },
     expired: { label: "With the bank", tone: "info" },
     approved: { label: "Approved", tone: "ok" },
     blocked: { label: "Blocked", tone: "alert" },

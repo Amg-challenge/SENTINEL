@@ -132,6 +132,13 @@ function BottomPanel({
           Waiting for {contactName}, the trusted contact. <strong>Do not pay out.</strong>
         </Panel>
       );
+    case "stopped_by_contact":
+      return (
+        <Panel tone="alert" icon={<Landmark />} className="animate-fade">
+          <strong>Do not pay out.</strong> {contactName} stopped it and asked the bank to check.
+          The bank will speak with the client before anything is paid out.
+        </Panel>
+      );
     case "with_bank":
       return (
         <Panel tone="info" icon={<Landmark />} className="animate-fade">
@@ -150,13 +157,14 @@ function BottomPanel({
         <Panel tone="ok" icon={<CheckCircle2 />} className="animate-fade">
           {decidedBy === "bank"
             ? "Approved by the bank's internal review. The teller may proceed."
-            : `Approved by ${contactName}. The teller may proceed.`}
+            : `Confirmed by ${contactName}. The teller may proceed.`}
         </Panel>
       );
     case "blocked":
       return (
         <Panel tone="alert" icon={<Ban />} className="animate-fade">
-          <strong>Blocked.</strong> Do not execute the transaction; suggest contacting the police.
+          <strong>Not executed.</strong> The bank's review, with the client, stopped it; suggest
+          contacting the police.
         </Panel>
       );
   }

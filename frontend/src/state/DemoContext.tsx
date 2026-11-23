@@ -19,7 +19,7 @@ import {
   type Scenario,
   type Stats,
 } from "@/lib/api";
-import type { Decision } from "./case";
+import type { ContactDecision, Decision } from "./case";
 
 export interface PendingRevocation {
   kind: "deactivate" | "change_contact";
@@ -49,8 +49,8 @@ interface DemoState {
   evaluating: boolean;
   setEvaluateAll: (v: boolean) => void;
 
-  decisions: Record<string, Decision>;
-  decide: (scenarioId: string, d: Decision) => void;
+  decisions: Record<string, ContactDecision>;
+  decide: (scenarioId: string, d: ContactDecision) => void;
   bankDecisions: Record<string, Decision>;
   bankDecide: (scenarioId: string, d: Decision) => void;
 
@@ -94,7 +94,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluateAll, setEvaluateAll] = useState(false);
 
-  const [decisions, setDecisions] = useState<Record<string, Decision>>({});
+  const [decisions, setDecisions] = useState<Record<string, ContactDecision>>({});
   const [bankDecisions, setBankDecisions] = useState<Record<string, Decision>>({});
   const [minutes, setMinutes] = useState(0);
   const [revocationHours, setRevocationHours] = useState(0);
@@ -229,7 +229,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setContact((c) => ({ ...c, ...patch }));
   }, []);
 
-  const decide = useCallback((id: string, d: Decision) => {
+  const decide = useCallback((id: string, d: ContactDecision) => {
     setDecisions((prev) => ({ ...prev, [id]: d }));
   }, []);
   const bankDecide = useCallback((id: string, d: Decision) => {

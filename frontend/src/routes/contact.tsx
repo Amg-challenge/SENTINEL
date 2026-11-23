@@ -9,7 +9,7 @@ export const Route = createFileRoute("/contact")({
   head: () =>
     pageHead(
       "Trusted contact",
-      "What the trusted contact sees on their phone, and how they approve or block in one tap.",
+      "What the trusted contact sees on their phone, and how they confirm, or stop and ask the bank to check, in one tap.",
     ),
   component: ContactPage,
 });

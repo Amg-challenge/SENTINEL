@@ -1,3 +1,5 @@
+> **Historical document (12.11.2026).** This is the prompt used to generate the first version of the front-end. Values in it are out of date: the engine threshold is now **0.50** (`backend/sentinel/model.py`), and the trusted contact *confirms* or *stops and asks the bank to check* (no final veto). The current behaviour is in `frontend/` and `docs/api.md`.
+
 # Build "Sentinel" — the pitch demo front-end
 
 ## 1. What you are building

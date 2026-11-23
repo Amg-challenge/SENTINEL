@@ -13,7 +13,7 @@ import pytest  # noqa: E402
 
 from sentinel import economics, model, profiles  # noqa: E402
 from sentinel.workflow import (ATTESA_REVOCA_ORE, Contatto, decidi, destinazione_finale,  # noqa: E402
-                               instrada, richiesta_revoca)
+                               esito_contatto, instrada, richiesta_revoca)
 
 BASE = model.adatta_baseline(profiles.genera_storico("anziano", seed=7))
 
@@ -90,6 +90,19 @@ def test_no_answer_goes_to_bank_and_bank_alert_pauses():
     assert destinazione_finale(op, Contatto("Anna"), risponde=False, minuti_trascorsi=31)[0] == "banca"
     assert destinazione_finale(op, Contatto("Anna"), risponde=True, minuti_trascorsi=31)[0] == "contatto"
     assert decidi(op, 0.05, 0.5, Contatto("Anna"), alert_esterno=True).in_pausa
+
+
+def test_contact_stop_is_not_a_veto():
+    assert esito_contatto(True)[0] == "esegui"
+    dest, motivo = esito_contatto(False)
+    assert dest == "banca" and "bank" in motivo
+
+
+def test_contact_stops_on_real_fraud_go_to_bank():
+    sc = _portafoglio()
+    a = economics.stima_alert(sc, 0.5, p_non_risposta=0.0)
+    assert a["quota_banca_stop_contatto"] > 0
+    assert a["quota_banca"] >= a["quota_banca_stop_contatto"]
 
 
 def test_revocation_waits_72_hours():

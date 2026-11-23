@@ -1,17 +1,17 @@
 scenario,group,threshold,alerts/client/year,resolved by contact,to the bank,to the bank for conflict of interest,bank cases/client/year,cost to serve CHF,fraud episodes caught,fraud money protected,money protected · abuso_interno,episodes caught · abuso_interno,money protected · bonifico_estero,episodes caught · bonifico_estero,money protected · truffa_esterna,episodes caught · truffa_esterna
-Base,base,0.5,1.477,0.79,0.21,0.071,0.31,7.23,0.894,0.958,0.947,0.962,1.0,1.0,0.939,0.826
-Large legit cash withdrawals: 1/year (base 2),sens,0.5,1.341,0.8,0.2,0.071,0.269,6.57,0.894,0.959,0.947,0.962,1.0,1.0,0.94,0.826
-Large legit cash withdrawals: 4/year,sens,0.5,1.746,0.797,0.203,0.062,0.354,8.01,0.882,0.949,0.947,0.962,1.0,1.0,0.925,0.808
-Legit transfers abroad: 1.5/year (base 0.5),sens,0.5,2.483,0.778,0.222,0.079,0.552,11.25,,,,,,,,
-Bank antifraud false positives: 1/year (base 0.3),sens,0.5,2.193,0.778,0.222,0.078,0.487,10.15,,,,,,,,
-Contacts not answering in 30 min: 5% (base 15%),sens,0.5,1.477,0.882,0.118,0.071,0.174,5.27,,,,,,,,
-Contacts not answering in 30 min: 30%,sens,0.5,1.477,0.662,0.338,0.071,0.499,9.97,,,,,,,,
-Customers with a POA holder: 30% (base 15%),sens,0.5,1.526,0.729,0.271,0.141,0.413,8.76,,,,,,,,
-Customers with a POA holder: 40%,sens,0.5,1.528,0.676,0.324,0.207,0.494,9.93,,,,,,,,
-Bank review cost per case: CHF 10 (base 15),sens,0.5,1.477,0.79,0.21,0.071,0.31,5.68,,,,,,,,
-Bank review cost per case: CHF 25,sens,0.5,1.477,0.79,0.21,0.071,0.31,10.33,,,,,,,,
-Fraud amounts from the public sources,fraud,0.5,1.477,0.79,0.21,0.071,0.31,7.23,0.974,0.993,1.0,1.0,1.0,1.0,0.992,0.956
-"Agreed cash limit: CHF 2,000",lever,0.5,1.476,0.79,0.21,0.071,0.31,7.23,0.894,0.958,0.947,0.962,1.0,1.0,0.939,0.826
-"Agreed cash limit: CHF 5,000",lever,0.5,1.349,0.799,0.201,0.07,0.271,6.61,0.878,0.951,0.947,0.962,1.0,1.0,0.928,0.801
-"Base, book set 2",robust,0.5,1.476,0.779,0.221,0.084,0.327,7.47,0.929,0.974,0.895,0.92,1.0,1.0,0.963,0.878
-"Base, book set 3",robust,0.5,1.576,0.785,0.215,0.079,0.339,7.7,0.888,0.957,0.889,0.938,1.0,1.0,0.938,0.816
+Base,base,0.5,1.477,0.788,0.212,0.071,0.313,7.28,0.894,0.958,0.947,0.962,1.0,1.0,0.939,0.826
+Large legit cash withdrawals: 1/year (base 2),sens,0.5,1.341,0.797,0.203,0.071,0.272,6.62,0.894,0.959,0.947,0.962,1.0,1.0,0.94,0.826
+Large legit cash withdrawals: 4/year,sens,0.5,1.746,0.795,0.205,0.062,0.358,8.06,0.882,0.949,0.947,0.962,1.0,1.0,0.925,0.808
+Legit transfers abroad: 1.5/year (base 0.5),sens,0.5,2.483,0.777,0.223,0.079,0.554,11.28,,,,,,,,
+Bank antifraud false positives: 1/year (base 0.3),sens,0.5,2.193,0.777,0.223,0.078,0.49,10.2,,,,,,,,
+Contacts not answering in 30 min: 5% (base 15%),sens,0.5,1.477,0.88,0.12,0.071,0.178,5.32,,,,,,,,
+Contacts not answering in 30 min: 30%,sens,0.5,1.477,0.66,0.34,0.071,0.502,10.02,,,,,,,,
+Customers with a POA holder: 30% (base 15%),sens,0.5,1.526,0.725,0.275,0.141,0.419,8.84,,,,,,,,
+Customers with a POA holder: 40%,sens,0.5,1.528,0.673,0.327,0.207,0.499,10.0,,,,,,,,
+Bank review cost per case: CHF 10 (base 15),sens,0.5,1.477,0.788,0.212,0.071,0.313,5.71,,,,,,,,
+Bank review cost per case: CHF 25,sens,0.5,1.477,0.788,0.212,0.071,0.313,10.42,,,,,,,,
+Fraud amounts from the public sources,fraud,0.5,1.477,0.788,0.212,0.071,0.313,7.28,0.974,0.993,1.0,1.0,1.0,1.0,0.992,0.956
+"Agreed cash limit: CHF 2,000",lever,0.5,1.476,0.788,0.212,0.071,0.313,7.28,0.894,0.958,0.947,0.962,1.0,1.0,0.939,0.826
+"Agreed cash limit: CHF 5,000",lever,0.5,1.349,0.797,0.203,0.07,0.273,6.64,0.878,0.951,0.947,0.962,1.0,1.0,0.928,0.801
+"Base, book set 2",robust,0.5,1.476,0.774,0.226,0.084,0.333,7.57,0.929,0.974,0.895,0.92,1.0,1.0,0.963,0.878
+"Base, book set 3",robust,0.5,1.576,0.778,0.222,0.079,0.35,7.86,0.888,0.957,0.889,0.938,1.0,1.0,0.938,0.816

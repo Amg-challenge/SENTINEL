@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
       "Stage",
-      "Live demo: an unusual withdrawal is put on hold until the trusted contact confirms or blocks it.",
+      "Live demo: an unusual withdrawal is put on hold until the trusted contact confirms it, or the bank checks it with the client.",
     ),
   component: StagePage,
 });
