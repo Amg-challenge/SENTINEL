@@ -33,7 +33,7 @@ The problem and competition figures were checked online on 16 November 2026 and 
 
 ## Still to do (Utente 4)
 
-- **By 29 November:** fill the placeholders (team name, names, email, experience) and run the first timed read-through.
+- **By 29 November:** fill the last placeholders (group email, one line of experience per person on the Team slide) and run the first timed read-through. Names and roles are in the deck (no team name).
 - **With Utente 3:** finalise the 90-second demo script (who speaks, what is shown).
 - **11–16 December:** timed rehearsals and Q&A drill, then export the deck to PDF and PowerPoint.
 - **Ongoing:** keep the project diary (`docs/project-diary.pdf`) up to date; after 17 December, write the rebuttal of the jury's critique for the January deliverable.
