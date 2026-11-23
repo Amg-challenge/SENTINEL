@@ -33,7 +33,7 @@ Check: `https://<railway-domain>/health` answers `{"status": "ok"}` and `/docs` 
 ## How we work
 
 1. Everyone works on their own branch (`modello`, `dati-economia`, `interfaccia`) and their own files; Pull Request to `main`.
-2. Before a Pull Request, the tests pass: `cd backend && python -m pytest -q`.
+2. Before a Pull Request, the tests pass: `cd backend && python -m pytest -q` and `cd frontend && bun install && bun run test`. GitHub Actions runs both, plus the TypeScript check, on every Pull Request (`.github/workflows/tests.yml`).
 3. The engine's signatures (`backend/README.md`) and the API (`docs/api.md`) change only with the group's agreement.
 4. After any change to engine or scenarios: `python scripts/export_demo_data.py` (from `backend/`) to refresh the data and the front-end fallback.
 

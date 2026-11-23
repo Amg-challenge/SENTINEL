@@ -29,7 +29,11 @@ INTEGRAZIONE_PER_BANCA = 20_000    # one-off integration cost per new bank (cove
 COSTI_FISSI = [500_000, 600_000, 900_000, 1_200_000, 1_400_000]   # v6 totals: team, product, compliance, sales
 
 # Our breakdown of the v6 totals (planning assumption, 23.11.2026; v6 gives only the totals).
-# Personnel = fully loaded cost (salary + social charges); founders below market in years 1-2.
+# Personnel = fully loaded cost (gross salary + employer social charges of about 13-19%).
+# Years 1-2: four founders on reduced pay (about CHF 65k loaded each, ~CHF 4,700 gross a
+# month) plus a part-time hire in year 2. From year 3: progressive hires; the average loaded
+# cost per FTE (93k -> 104k) stays BELOW the Swiss market for software roles (median gross
+# salary about CHF 96k-110k, i.e. CHF 110k-130k loaded). See SCENARIO_STIPENDI_MERCATO.
 FTE = [4, 4.5, 6, 8, 9]
 COMPONENTI_FISSI = {
     "personnel":                     [260_000, 330_000, 560_000, 790_000, 940_000],
@@ -62,7 +66,14 @@ def clienti_fine_anno() -> list[int]:
     return out
 
 
-def piano() -> pd.DataFrame:
+# Alternative: market salaries from year 3 (CHF 120k loaded per FTE), everything else equal.
+PERSONALE_MERCATO = [260_000, 330_000, 6 * 120_000, 8 * 120_000, 9 * 120_000]
+COSTI_FISSI_MERCATO = [COSTI_FISSI[i] - COMPONENTI_FISSI["personnel"][i] + PERSONALE_MERCATO[i]
+                       for i in range(5)]
+
+
+def piano(costi_fissi: list[float] | None = None) -> pd.DataFrame:
+    costi_fissi = costi_fissi or COSTI_FISSI
     fine = clienti_fine_anno()
     inizio = [0] + fine[:-1]
     righe = []
@@ -73,11 +84,11 @@ def piano() -> pd.DataFrame:
         setup = SETUP_FEE_PILOTA + SETUP_FEE * (NUOVE_BANCHE[i] - 1) if i == 0 else SETUP_FEE * NUOVE_BANCHE[i]
         ricavi_ric = medi * PREZZO_ANNO
         variabili = medi * COSTO_SERVIZIO + INTEGRAZIONE_PER_BANCA * NUOVE_BANCHE[i]
-        costi = variabili + COSTI_FISSI[i]
+        costi = variabili + costi_fissi[i]
         ricavi = ricavi_ric + setup
         righe.append({"year": i + 1, "banks": banche, "clients_end": fine[i], "clients_avg": medi,
                       "recurring_revenue": ricavi_ric, "setup_fees": setup, "revenue": ricavi,
-                      "variable_costs": variabili, "fixed_costs": COSTI_FISSI[i], "costs": costi,
+                      "variable_costs": variabili, "fixed_costs": costi_fissi[i], "costs": costi,
                       "ebitda": ricavi - costi, "run_rate_end": fine[i] * PREZZO_ANNO})
     df = pd.DataFrame(righe)
     df["cumulative"] = df["ebitda"].cumsum()
@@ -98,10 +109,28 @@ if __name__ == "__main__":
     print("\nFixed costs, CHF thousand (our breakdown of the v6 totals)")
     comp = pd.DataFrame(COMPONENTI_FISSI, index=[f"Y{i}" for i in range(1, 6)]).T / 1000
     comp.loc["total"] = comp.sum()
+    comp.loc["personnel share %"] = (comp.loc["personnel"] / comp.loc["total"] * 100).round(0)
+    comp.loc["loaded cost per FTE"] = (comp.loc["personnel"] / pd.Series(FTE, index=comp.columns)).round(1)
     comp.loc["FTE"] = FTE
     print(comp.round(1).to_string())
     comp.round(1).to_csv("results/fixed_costs.csv")
-    print(f"\nNet burn over the first 18 months: CHF {burn_18:,.0f} (≈ CHF {burn_18 / 18:,.0f} a month)")
+    print(f"\nCumulative EBITDA loss, months 1-18: CHF {burn_18:,.0f} (≈ CHF {burn_18 / 18:,.0f} a month)")
+    print("  = cumulative EBITDA loss of months 1-18. Taken as the cash need: the model has no capex"
+          " (software is expensed), no income tax (losses), VAT is neutral; receivables at 30 days"
+          " would add only about one month of revenue (< CHF 10k).")
+    # use of funds over 18 months, from the same plan (gross spending, by line)
+    m = {k: v[0] + v[1] / 2 for k, v in COMPONENTI_FISSI.items()}
+    var18 = df.loc[0, "variable_costs"] + df.loc[1, "variable_costs"] / 2
+    ric18 = df.loc[0, "revenue"] + df.loc[1, "revenue"] / 2
+    usi = {"team": m["personnel"],
+           "product, cloud and service": m["tech development & maintenance"] + m["cloud & infrastructure (base)"] + var18,
+           "compliance, security and legal": m["compliance, security & legal"],
+           "sales and commercial": m["sales & commercial"]}
+    lordo = sum(usi.values())
+    print(f"\nUse of funds, months 1-18 (gross spending CHF {lordo:,.0f}; funded by the CHF 800,000"
+          f" pre-seed + CHF {ric18:,.0f} pilot revenue; left: CHF {800_000 + ric18 - lordo:,.0f})")
+    for k, v in usi.items():
+        print(f"  {k:32s} CHF {v:9,.0f}  {v / lordo:5.0%}")
     contrib = PREZZO_ANNO - COSTO_SERVIZIO
     print(f"Break-even (year-5 fixed costs / contribution): {COSTI_FISSI[-1] / contrib:,.0f} clients "
           f"≈ {COSTI_FISSI[-1] / contrib / (CLIENTI_65_PER_BANCA * ADOZIONE[2]):.0f} banks at maturity")
@@ -147,5 +176,13 @@ def scenario(adozione, prezzo, costo, cac, banche, churn=0.10):
 
 
 if __name__ == "__main__":
+    alt = piano(COSTI_FISSI_MERCATO)
+    print("\nAlternative · market salaries from year 3 (CHF 120k loaded per FTE)")
+    print(f"  fixed costs (k): {[round(x / 1000) for x in COSTI_FISSI_MERCATO]}")
+    print(f"  EBITDA (k): {[round(x / 1000) for x in alt['ebitda']]}; cumulative 5 years:"
+          f" CHF {alt['cumulative'].iloc[-1] / 1e6:.2f} m (base {df['cumulative'].iloc[-1] / 1e6:.2f} m)")
+    print(f"  break-even: {COSTI_FISSI_MERCATO[-1] / contrib:,.0f} clients"
+          f" ≈ {COSTI_FISSI_MERCATO[-1] / contrib / (CLIENTI_65_PER_BANCA * ADOZIONE[2]):.0f} mature banks;"
+          " the first 18 months do not change")
     print("\nAppendix A3 · per bank and after five years")
     print(pd.DataFrame({k: scenario(**v) for k, v in SCENARI.items()}).round(1).to_string())

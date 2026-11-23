@@ -14,8 +14,18 @@ The demo shown during the pitch. Built from the Lovable prompt (`../docs/lovable
 | Deploy | Vercel, production branch `main`, top bar shows **Live API** |
 | Direct links | `/`, `/person`, `/counter`, `/contact`, `/bank`, `/appendix` all load when opened directly (server-rendered, HTTP 200); unknown paths return 404 |
 | Offline fallback | `/demo-fallback.json` served; "Force offline data" switches to it |
-| Tests | `npm test`: all **15** front-end tests pass (run in Codespaces, 16 November 2026) |
+| Tests | `bun run test` (or `npm test`): all **18** front-end tests pass, and `tsc --noEmit` reports no errors — run by GitHub Actions on PR #13 (23 November 2026, `.github/workflows/tests.yml`). The previous 15 were run in Codespaces on 16 November |
+| Stop flow | Checked by hand on the live site (23 November 2026): *Stop · ask the bank to check* puts the counter on hold, the case appears in the bank queue, the bank's *Approve* lets the teller proceed; *I spoke to him, confirm* releases the hold. Procedure below |
 | 72-hour revocation | Re-tested on the Vercel interface (16 November 2026): at 71 hours Sentinel is still active, at 72 hours it is deactivated correctly |
+
+## Manual check of the Stop flow (2 minutes)
+
+1. Open the site (production or the Vercel preview of a PR), press **Reset demo**, scenario *Fake police officer: cash at the counter*.
+2. **Person:** tick *I consent…*; Anna is the contact.
+3. **Contact:** the phone shows CHF 40,000 and two buttons. Press **Stop · ask the bank to check** → *The withdrawal is on hold. The bank will speak to your father.*
+4. **Counter:** status *Held · with the bank*, text *Do not pay out. Anna stopped it and asked the bank to check…*; the timeline shows the bank taking over at once.
+5. **Bank:** the case is in the queue, reason *Anna stopped it and asked for a check*, with score and reasons. Press **Approve** (the client confirmed with the bank) → the counter shows *Approved by the bank after its review with the client*. Or **Block** → *Not executed*.
+6. **Reset demo**, give consent again, then on **Contact** press **I spoke to him, confirm** → the counter shows *Confirmed by Anna. The teller may proceed.* and the bank queue stays empty.
 
 ## Stack
 
