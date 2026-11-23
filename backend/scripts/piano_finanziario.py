@@ -24,6 +24,8 @@ NUOVE_BANCHE = [1, 2, 2, 3, 2]     # banks signed in years 1..5 (v6: 1, 3, 5, 8,
 PREZZO_ANNO = 30.0                 # CHF 2.50 per client per month, list price also in the pilot
 SETUP_FEE = 25_000                 # one-off per bank
 SETUP_FEE_PILOTA = 10_000          # reduced setup fee for the pilot bank, in exchange for data and a case study
+PRE_SEED = 900_000                 # amount raised (group decision 23.11.2026; was 800,000)
+SEED = 3_000_000                   # seed round at month 18, only if adoption is close to the base case
 COSTO_SERVIZIO = 7.0               # CHF per client per year (simulation: 7.23)
 INTEGRAZIONE_PER_BANCA = 20_000    # one-off integration cost per new bank (covered by the setup fee)
 COSTI_FISSI = [500_000, 600_000, 900_000, 1_200_000, 1_400_000]   # v6 totals: team, product, compliance, sales
@@ -127,10 +129,16 @@ if __name__ == "__main__":
            "compliance, security and legal": m["compliance, security & legal"],
            "sales and commercial": m["sales & commercial"]}
     lordo = sum(usi.values())
-    print(f"\nUse of funds, months 1-18 (gross spending CHF {lordo:,.0f}; funded by the CHF 800,000"
-          f" pre-seed + CHF {ric18:,.0f} pilot revenue; left: CHF {800_000 + ric18 - lordo:,.0f})")
+    riserva = PRE_SEED + ric18 - lordo
+    print(f"\nSources and uses, months 1-18")
+    print(f"  sources: pre-seed CHF {PRE_SEED:,.0f} + pilot revenue CHF {ric18:,.0f} = CHF {PRE_SEED + ric18:,.0f}")
+    print(f"  uses:    spending CHF {lordo:,.0f}")
     for k, v in usi.items():
-        print(f"  {k:32s} CHF {v:9,.0f}  {v / lordo:5.0%}")
+        print(f"    {k:32s} CHF {v:9,.0f}  {v / lordo:5.0%} of spending")
+    print(f"  reserve at month 18: CHF {riserva:,.0f} = {riserva / (burn_18 / 18):.1f} months of the average"
+          f" net burn (CHF {burn_18 / 18:,.0f}/month); {riserva / (lordo / 18):.1f} months of gross spending")
+    cassa = PRE_SEED + SEED + df["ebitda"].sum()
+    print(f"  cash at the end of year 5 with pre-seed + seed (CHF {(PRE_SEED + SEED) / 1e6:.1f} m): CHF {cassa:,.0f}")
     contrib = PREZZO_ANNO - COSTO_SERVIZIO
     print(f"Break-even (year-5 fixed costs / contribution): {COSTI_FISSI[-1] / contrib:,.0f} clients "
           f"≈ {COSTI_FISSI[-1] / contrib / (CLIENTI_65_PER_BANCA * ADOZIONE[2]):.0f} banks at maturity")
@@ -184,5 +192,6 @@ if __name__ == "__main__":
     print(f"  break-even: {COSTI_FISSI_MERCATO[-1] / contrib:,.0f} clients"
           f" ≈ {COSTI_FISSI_MERCATO[-1] / contrib / (CLIENTI_65_PER_BANCA * ADOZIONE[2]):.0f} mature banks;"
           " the first 18 months do not change")
+    print(f"  cash at the end of year 5 with pre-seed + seed: CHF {PRE_SEED + SEED + alt['ebitda'].sum():,.0f}")
     print("\nAppendix A3 · per bank and after five years")
     print(pd.DataFrame({k: scenario(**v) for k, v in SCENARI.items()}).round(1).to_string())

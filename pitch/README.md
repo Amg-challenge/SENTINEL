@@ -25,7 +25,7 @@ Every figure comes from v6 or from the simulation (`backend/results/simulation_r
 | Pilot | 500 clients, list price per client, setup fee CHF 10,000 instead of 25,000 | revised 23.11 |
 | Five years (base) | 10 banks, 28,800 clients at the end of year 5 · revenue year 5 CHF 794 k · run-rate CHF 864 k · cumulative EBITDA −CHF 3.34 m | `backend/results/financial_plan.csv` |
 | TAM / SAM / SOM | CHF 680 m / 29 m / 0.9 m a year (SAM = 1.81 m × 53% × CHF 30; SOM = run-rate at the end of year 5, ≈ 3% of the SAM) | v6, revised 23.11 |
-| Ask | CHF 800,000 pre-seed for the 500-client pilot, 18 months. Months 1–18: spending CHF 851 k (team 425, product/cloud/service 221, compliance 105, sales 100), pilot revenue ≈ 82 k, EBITDA loss ≈ CHF 770 k (≈ 43 k a month, = cash need: no capex); ≈ CHF 31 k left | v6, revised 23.11 |
+| Ask | CHF 900,000 pre-seed for the 500-client pilot. Months 1–18: sources CHF 982 k (900 k pre-seed + ≈ 82 k pilot revenue); uses CHF 851 k of spending (team 425, product/cloud/service 221, compliance 105, sales 100) + CHF 131 k reserve, ≈ 3 months of burn. EBITDA loss ≈ CHF 770 k (≈ 43 k a month, = cash need: no capex) | v6, revised 23.11 (ask raised from 800 k) |
 | Fixed costs | v6 totals 500 → 1,400 k; team 52% (year 1) → 67% (year 5), 4 → 9 FTE, lean salaries. At market pay from year 3: 5-year loss CHF 3.81 m (base 3.34 m), break-even ≈ 67,000 clients | `backend/results/financial_plan.txt` |
 | Tests | Backend 26 and front-end 18 automated tests pass, TypeScript clean (GitHub Actions, 23.11.2026); Stop flow and 72 hours also checked by hand on the live site | `.github/workflows/tests.yml` |
 
