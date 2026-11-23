@@ -4,7 +4,7 @@
 
 **Deck:** https://claude.ai/artifact/C7xGAz6TkSK3oEEGBiNJX4. It has 13 slides plus a 9-slide appendix. The full spoken script is in each slide's speaker notes. Export it as PowerPoint or PDF from *Share › Export*, and keep a PDF copy on a USB stick for the day.
 
-**Placeholders to fill before 29 November:** `[Team name]`, `[Name 1–4]`, `[team email]`, and one line of real experience per person on the Team slide.
+**Still to fill:** `[team email]` (cover and closing) and one line of real experience per person on the Team slide (`[Studies · relevant experience]`). Names and roles are in the deck; there is no team name.
 
 ---
 
@@ -12,26 +12,26 @@
 
 Assumption: a pitch of **about 9 minutes, then questions**. Confirm the time limit with the professor. If it is shorter, see the cut list in §6.
 
-Each person presents the part they built (Team slide): [Name 1] decision engine · [Name 2] data and risk economics · [Name 3] product and interface · [Name 4] business and pitch.
+Each person presents the part they built (Team slide): Alessandro Maugeri decision engine · Stefano Martino data and risk economics · Giorgio Ferretto product and interface · Raffaele Sicolo business and pitch.
 
 | # | Slide | Speaker | Time | The one line to land |
 |---|---|---|---|---|
-| 1 | Title | [Name 4] | 0:15 | “When the bank sees something unusual, it calls the right person: the one you trust.” |
-| 2 | Problem | [Name 4] | 1:00 | The payment is authorised by the client; under pressure, the client confirms it. |
-| 3 | Solution | [Name 4] | 0:45 | The client chooses, Sentinel pauses, the trusted contact confirms or requests a bank review; the bank decides when there is a conflict, no answer, or a review request. |
-| 4 | Market | [Name 2] | 0:40 | Switzerland is the launch pad; the venture size is in DACH. |
-| 5 | Product: live demo | [Name 3] (drives and narrates) | 1:30 | See §2. |
-| 6 | Business model | [Name 2] | 0:50 | The bank pays CHF 2.50 per client per month for trust, not for the money saved. |
-| 7 | Go-to-market | [Name 2] | 0:35 | One pilot bank in Ticino, then the sister banks. |
-| 8 | Prototype and early validation | [Name 1] | 0:40 | A live prototype; the simulated bank shows the plan is consistent (1.5 alerts, 21% to the bank, CHF 7.3) — the pilot must prove it. |
-| 9 | Competition | [Name 1] | 0:50 | KBC runs the idea at scale; we make it a ready module for every bank, with the counter, the safe box and internal abuse covered. |
-| 10 | Team | [Name 1] | 0:25 | Four people, one part of the product each. |
-| 11 | Financials | [Name 4] | 0:45 | J-curve; break-even at about 60,000 clients, with DACH. |
-| 12 | The ask | [Name 4] | 0:35 | CHF 900,000 pre-seed for the 500-client pilot: 18 months of plan plus ≈ 3 months of reserve, three milestones. |
-| 13 | Closing | [Name 4] | 0:20 | “We are looking for a Ticino bank for a 500-client pilot.” |
+| 1 | Title | Raffaele Sicolo | 0:15 | “When the bank sees something unusual, it calls the right person: the one you trust.” |
+| 2 | Problem | Raffaele Sicolo | 1:00 | The payment is authorised by the client; under pressure, the client confirms it. |
+| 3 | Solution | Raffaele Sicolo | 0:45 | The client chooses, Sentinel pauses, the trusted contact confirms or requests a bank review; the bank decides when there is a conflict, no answer, or a review request. |
+| 4 | Market | Stefano Martino | 0:40 | Switzerland is the launch pad; the venture size is in DACH. |
+| 5 | Product: live demo | Giorgio Ferretto (drives and narrates) | 1:30 | See §2. |
+| 6 | Business model | Stefano Martino | 0:50 | The bank pays CHF 2.50 per client per month for trust, not for the money saved. |
+| 7 | Go-to-market | Stefano Martino | 0:35 | One pilot bank in Ticino, then the sister banks. |
+| 8 | Prototype and early validation | Alessandro Maugeri | 0:40 | A live prototype; the simulated bank shows the plan is consistent (1.5 alerts, 21% to the bank, CHF 7.3) — the pilot must prove it. |
+| 9 | Competition | Alessandro Maugeri | 0:50 | KBC runs the idea at scale; we make it a ready module for every bank, with the counter, the safe box and internal abuse covered. |
+| 10 | Team | Alessandro Maugeri | 0:25 | Four people, one part of the product each. |
+| 11 | Financials | Raffaele Sicolo | 0:45 | J-curve; break-even at about 60,000 clients, with DACH. |
+| 12 | The ask | Raffaele Sicolo | 0:35 | CHF 900,000 pre-seed for the 500-client pilot: 18 months of plan plus ≈ 3 months of reserve, three milestones. |
+| 13 | Closing | Raffaele Sicolo | 0:20 | “We are looking for a Ticino bank for a 500-client pilot.” |
 | | **Total** | | **9:10** | |
 
-Handovers: 3→4, 4→5, 5→6, 7→8 and 10→11. The person finishing names the next speaker (“Now [Name 3] will show you the product”).
+Handovers: 3→4, 4→5, 5→6, 7→8 and 10→11. The person finishing names the next speaker (“Now Giorgio Ferretto will show you the product”).
 
 ## 2. Demo script (90 seconds) · draft to finalise with Utente 3
 
@@ -62,45 +62,45 @@ Answers in two or three sentences. **Owner** is who answers first; *A1–A8* are
 ### Business model
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| Why would a bank pay, if the scam loss usually stays with the client? | It pays for trust and relationships: its reputation, its senior and affluent clients, a link with the heirs, fewer complaints. About CHF 96,000 a year for a typical bank, less than one full-time employee. | [Name 2] · 6 |
-| Is 8% adoption realistic? | It is our main uncertainty, and the pilot measures it first. The model works above about 3% (LTV/CAC ≥ 3×); a 12-month payback needs about 11%. | [Name 2] · A3 |
-| Why not charge the client or the family? | The bank owns the relationship and the channel (app, counter). A direct family plan is an option, not the base case. | [Name 2] · A7 |
-| What does it cost you per client? | About CHF 7 a year, measured by simulating the whole process: CHF 2 platform, 0.6 notifications, 4.7 bank reviews (CHF 7.3). Never above about CHF 11 in our stress tests, against a CHF 30 price. | [Name 2] · A2 |
-| When do you break even? | At about 60,000 clients (≈ 19 mature banks), not before years 7–8, with Germany and Austria. Each funding round is tied to a milestone. | [Name 4] · 11 |
-| What are your fixed costs made of, and why do they grow? | Mostly people: the team is 52% of fixed costs in year 1 and 67% in year 5, from 4 founders on reduced pay (CHF 260 k, about CHF 4,700 gross a month each) to 9 people in year 5 (CHF 940 k). The rest: development and maintenance (80 → 110 k), base cloud (30 → 90 k), compliance, security and legal (70 → 120 k), sales (60 → 140 k). They grow with each bank: integration, supplier audits, support. This split of the v6 totals is our planning assumption (`backend/results/fixed_costs.csv`). Salaries are lean: from year 3 hires average about CHF 100 k loaded, below the Swiss market for software roles (median gross about CHF 96–110 k, plus 13–19% employer charges). At market pay the five-year loss is CHF 3.81 m instead of 3.34 m, the CHF 900 k pre-seed and a CHF 3 m seed would only just cover it (≈ CHF 90 k left), so a larger seed would be prudent, and break-even moves to ≈ 67,000 clients; the first 18 months do not change. | [Name 4] · 11 |
-| Is CHF 900,000 enough? | Yes, with a margin. In months 1–18 the plan spends CHF 851 k and earns ≈ CHF 82 k from the pilot: an EBITDA loss of ≈ CHF 770 k (≈ 43 k a month), which is also the cash need (no capex, no tax on losses, receivables under CHF 10 k). That leaves ≈ CHF 131 k, about three months of burn, for a late pilot or slower adoption. We raised the ask from 800 k for that margin; the spending did not change. | [Name 4] · 12 |
-| What do investors get, and who could buy you? | Exposure to a regulated, sticky B2B niche. Natural acquirers: antifraud and core-banking vendors that want the module for their banks. | [Name 4] · 12 |
+| Why would a bank pay, if the scam loss usually stays with the client? | It pays for trust and relationships: its reputation, its senior and affluent clients, a link with the heirs, fewer complaints. About CHF 96,000 a year for a typical bank, less than one full-time employee. | Stefano Martino · 6 |
+| Is 8% adoption realistic? | It is our main uncertainty, and the pilot measures it first. The model works above about 3% (LTV/CAC ≥ 3×); a 12-month payback needs about 11%. | Stefano Martino · A3 |
+| Why not charge the client or the family? | The bank owns the relationship and the channel (app, counter). A direct family plan is an option, not the base case. | Stefano Martino · A7 |
+| What does it cost you per client? | About CHF 7 a year, measured by simulating the whole process: CHF 2 platform, 0.6 notifications, 4.7 bank reviews (CHF 7.3). Never above about CHF 11 in our stress tests, against a CHF 30 price. | Stefano Martino · A2 |
+| When do you break even? | At about 60,000 clients (≈ 19 mature banks), not before years 7–8, with Germany and Austria. Each funding round is tied to a milestone. | Raffaele Sicolo · 11 |
+| What are your fixed costs made of, and why do they grow? | Mostly people: the team is 52% of fixed costs in year 1 and 67% in year 5, from 4 founders on reduced pay (CHF 260 k, about CHF 4,700 gross a month each) to 9 people in year 5 (CHF 940 k). The rest: development and maintenance (80 → 110 k), base cloud (30 → 90 k), compliance, security and legal (70 → 120 k), sales (60 → 140 k). They grow with each bank: integration, supplier audits, support. This split of the v6 totals is our planning assumption (`backend/results/fixed_costs.csv`). Salaries are lean: from year 3 hires average about CHF 100 k loaded, below the Swiss market for software roles (median gross about CHF 96–110 k, plus 13–19% employer charges). At market pay the five-year loss is CHF 3.81 m instead of 3.34 m, the CHF 900 k pre-seed and a CHF 3 m seed would only just cover it (≈ CHF 90 k left), so a larger seed would be prudent, and break-even moves to ≈ 67,000 clients; the first 18 months do not change. | Raffaele Sicolo · 11 |
+| Is CHF 900,000 enough? | Yes, with a margin. In months 1–18 the plan spends CHF 851 k and earns ≈ CHF 82 k from the pilot: an EBITDA loss of ≈ CHF 770 k (≈ 43 k a month), which is also the cash need (no capex, no tax on losses, receivables under CHF 10 k). That leaves ≈ CHF 131 k, about three months of burn, for a late pilot or slower adoption. We raised the ask from 800 k for that margin; the spending did not change. | Raffaele Sicolo · 12 |
+| What do investors get, and who could buy you? | Exposure to a regulated, sticky B2B niche. Natural acquirers: antifraud and core-banking vendors that want the module for their banks. | Raffaele Sicolo · 12 |
 
 ### Competition
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| KBC already does this: why would banks not build it? | Large banks can. Our hypothesis, still to test in interviews, is that many mid-sized and small banks would rather buy a ready module than build one. KBC’s Guardian Angel works on transfers in its app, flagged by its own fraud system; according to KBC’s FAQ, without an answer the transfer can still go ahead after a waiting period. Sentinel adds the counter and the safe deposit box, a conflict-of-interest rule and the bank after 30 minutes. | [Name 1] · 9 |
-| What if KBC or Vyntra (ex-NetGuardians) offers it? | KBC offers the concept to other financial institutions on request, so speed matters: we aim to move early in Switzerland, with the counter, the safe deposit box and internal abuse covered. We see Vyntra as a partner and channel, not a rival. | [Name 1] · A6 |
-| What is your moat? | Honestly none today. Switching costs (integration, contacts and rules already set) and scale (integration and compliance spread over many banks) come with adoption. | [Name 1] · 9 |
+| KBC already does this: why would banks not build it? | Large banks can. Our hypothesis, still to test in interviews, is that many mid-sized and small banks would rather buy a ready module than build one. KBC’s Guardian Angel works on transfers in its app, flagged by its own fraud system; according to KBC’s FAQ, without an answer the transfer can still go ahead after a waiting period. Sentinel adds the counter and the safe deposit box, a conflict-of-interest rule and the bank after 30 minutes. | Alessandro Maugeri · 9 |
+| What if KBC or Vyntra (ex-NetGuardians) offers it? | KBC offers the concept to other financial institutions on request, so speed matters: we aim to move early in Switzerland, with the counter, the safe deposit box and internal abuse covered. We see Vyntra as a partner and channel, not a rival. | Alessandro Maugeri · A6 |
+| What is your moat? | Honestly none today. Switching costs (integration, contacts and rules already set) and scale (integration and compliance spread over many banks) come with adoption. | Alessandro Maugeri · 9 |
 
 ### Product and technology
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| Won’t clients be annoyed by alerts? | About 1.5 a year per client in our simulation, and only on unusual operations. The threshold is set by cost; an optional agreed cash limit exists for heavy cash users. | [Name 1] · A2 |
-| What if the trusted contact is the abuser? | If they initiated the operation, benefit from it, hold a power of attorney or are co-holder, they are never asked: the bank decides. They never see the balance and cannot move money. | [Name 3] · A4 |
-| The client waits 30 minutes at the counter? | Most contacts answer in minutes; after 30 minutes the bank decides, and nothing is approved by default. In the pilot we would also let the branch send a case to the bank’s review at once. | [Name 3] · A4 |
-| What if the scammer makes the victim switch Sentinel off? | It takes 72 hours and the contact is told immediately (tested: active at 71 h, off at 72 h). It is a rule we propose: a client can normally revoke an instruction at any time (for a mandate, art. 404 CO), so the bank’s lawyers must confirm whether and how the delay can be agreed. | [Name 3] · A4, A5 |
-| Is the 72-hour delay legal? | We do not assume it is. It is a proposed service rule, to be agreed with each bank and its lawyers; the right to revoke an instruction at any time is the first point to check. | [Name 4] · A5 |
-| Is the AI a black box? | No. Every pause comes with its reason. On our synthetic data an Isolation Forest ranks operations as well (similar AUC) but cannot say why. | [Name 1] · A1 |
-| An AUC of 0.98 is too good to be true? | Yes, on real data it would be. AUC measures ranking, not accuracy, and ours is measured on synthetic data generated with the same logic as the engine: it shows the engine is coherent, not that it is validated. At 0.50 it catches 89% of episodes and 96% of the money; almost every alert is a false alarm, which is why each must be cheap. | [Name 1] · A1 |
-| CHF 5 per false alarm on A1, CHF 15 per case on A2: which is it? | Two different things. CHF 5 is a weight for the nuisance of a false alarm, used only to choose the threshold. The cash costs are CHF 0.50 per alert the contact confirms and CHF 15 per case the bank reviews; they give the CHF 7.3 cost to serve. | [Name 1] · A1, A2 |
-| What does the 1% fraud rate mean? | Our assumption: 1% of protected clients have at least one material fraud episode a year. It is consistent with Pro Senectute (about 1% a year each for scams and for financial maltreatment among people 55+); we tested 0.5%–2%. | [Name 1] · A1 |
-| Your numbers come from synthetic data? | Yes, and we say so. The engine’s parameters come from Swiss public sources (Pro Senectute 2023, cantonal police, fedpol); the simulation uses the same assumptions as the business plan, so it shows consistency, not proof. Real data come from the pilot. | [Name 1] · A1, A8 |
-| How does it plug into a bank? | As a white-label module: it reads operations and the bank’s antifraud alerts through an API, and sends notifications through the bank’s app. Card payments stay with the bank’s card antifraud. | [Name 3] · 3 |
+| Won’t clients be annoyed by alerts? | About 1.5 a year per client in our simulation, and only on unusual operations. The threshold is set by cost; an optional agreed cash limit exists for heavy cash users. | Alessandro Maugeri · A2 |
+| What if the trusted contact is the abuser? | If they initiated the operation, benefit from it, hold a power of attorney or are co-holder, they are never asked: the bank decides. They never see the balance and cannot move money. | Giorgio Ferretto · A4 |
+| The client waits 30 minutes at the counter? | Most contacts answer in minutes; after 30 minutes the bank decides, and nothing is approved by default. In the pilot we would also let the branch send a case to the bank’s review at once. | Giorgio Ferretto · A4 |
+| What if the scammer makes the victim switch Sentinel off? | It takes 72 hours and the contact is told immediately (tested: active at 71 h, off at 72 h). It is a rule we propose: a client can normally revoke an instruction at any time (for a mandate, art. 404 CO), so the bank’s lawyers must confirm whether and how the delay can be agreed. | Giorgio Ferretto · A4, A5 |
+| Is the 72-hour delay legal? | We do not assume it is. It is a proposed service rule, to be agreed with each bank and its lawyers; the right to revoke an instruction at any time is the first point to check. | Raffaele Sicolo · A5 |
+| Is the AI a black box? | No. Every pause comes with its reason. On our synthetic data an Isolation Forest ranks operations as well (similar AUC) but cannot say why. | Alessandro Maugeri · A1 |
+| An AUC of 0.98 is too good to be true? | Yes, on real data it would be. AUC measures ranking, not accuracy, and ours is measured on synthetic data generated with the same logic as the engine: it shows the engine is coherent, not that it is validated. At 0.50 it catches 89% of episodes and 96% of the money; almost every alert is a false alarm, which is why each must be cheap. | Alessandro Maugeri · A1 |
+| CHF 5 per false alarm on A1, CHF 15 per case on A2: which is it? | Two different things. CHF 5 is a weight for the nuisance of a false alarm, used only to choose the threshold. The cash costs are CHF 0.50 per alert the contact confirms and CHF 15 per case the bank reviews; they give the CHF 7.3 cost to serve. | Alessandro Maugeri · A1, A2 |
+| What does the 1% fraud rate mean? | Our assumption: 1% of protected clients have at least one material fraud episode a year. It is consistent with Pro Senectute (about 1% a year each for scams and for financial maltreatment among people 55+); we tested 0.5%–2%. | Alessandro Maugeri · A1 |
+| Your numbers come from synthetic data? | Yes, and we say so. The engine’s parameters come from Swiss public sources (Pro Senectute 2023, cantonal police, fedpol); the simulation uses the same assumptions as the business plan, so it shows consistency, not proof. Real data come from the pilot. | Alessandro Maugeri · A1, A8 |
+| How does it plug into a bank? | As a white-label module: it reads operations and the bank’s antifraud alerts through an API, and sends notifications through the bank’s app. Card payments stay with the bank’s card antifraud. | Giorgio Ferretto · 3 |
 
 ### Regulation and ethics
 | Question | Short answer | Owner · slide |
 |---|---|---|
-| Do you need a banking licence? | We do not expect so: Sentinel never receives or holds money, it is software sold to banks. To be confirmed with counsel. | [Name 4] · A5 |
-| Banking secrecy and data protection? | The client releases the bank from secrecy towards the contact, in writing at the branch, and asks it to hold flagged operations (nFADP, banking secrecy). The contact sees only the paused operation. | [Name 4] · A5 |
-| The contact requests a review, but the client wants the money: who wins? | The client, after the bank’s check. The contact is consulted because the client asked for it; a review request holds the operation, it is not a veto. The bank talks to the client and decides after its own checks; the client can also switch Sentinel off (72 h). | [Name 3] · A4 |
-| Who is liable if the contact approves a scam? | The operation is the client’s own instruction; the contact’s “confirm” only releases the hold the client asked for, and the bank keeps its usual duties. Sentinel adds a check, it does not take over the decision. Liability between bank, Sentinel and contact is set by contract, with the contact’s liability limited — to be defined with counsel and the bank’s compliance team (not legal advice). | [Name 4] · A5 |
-| Is this paternalistic towards older people? | The client chooses: consent, their own contact and rules, no label, no age test. Switching it off is always possible, with a proposed 72-hour safety delay. | [Name 4] · 3 |
+| Do you need a banking licence? | We do not expect so: Sentinel never receives or holds money, it is software sold to banks. To be confirmed with counsel. | Raffaele Sicolo · A5 |
+| Banking secrecy and data protection? | The client releases the bank from secrecy towards the contact, in writing at the branch, and asks it to hold flagged operations (nFADP, banking secrecy). The contact sees only the paused operation. | Raffaele Sicolo · A5 |
+| The contact requests a review, but the client wants the money: who wins? | The client, after the bank’s check. The contact is consulted because the client asked for it; a review request holds the operation, it is not a veto. The bank talks to the client and decides after its own checks; the client can also switch Sentinel off (72 h). | Giorgio Ferretto · A4 |
+| Who is liable if the contact approves a scam? | The operation is the client’s own instruction; the contact’s “confirm” only releases the hold the client asked for, and the bank keeps its usual duties. Sentinel adds a check, it does not take over the decision. Liability between bank, Sentinel and contact is set by contract, with the contact’s liability limited — to be defined with counsel and the bank’s compliance team (not legal advice). | Raffaele Sicolo · A5 |
+| Is this paternalistic towards older people? | The client chooses: consent, their own contact and rules, no label, no age test. Switching it off is always possible, with a proposed 72-hour safety delay. | Raffaele Sicolo · 3 |
 
 ## 4. Rehearsal plan
 
