@@ -26,6 +26,18 @@ export interface CaseView {
   decidedBy: "contact" | "bank" | null;
 }
 
+/**
+ * Does this case belong in the bank's queue? Conflicts of interest and unanswered cases
+ * (routed to the bank by the engine), and every operation the trusted contact stopped.
+ */
+export function inBankQueue(
+  ev: Pick<Evaluation, "paused" | "destination"> | undefined,
+  contactDecision: ContactDecision | undefined,
+): boolean {
+  if (!ev?.paused) return false;
+  return ev.destination === "bank" || contactDecision === "stopped";
+}
+
 /** Single source of truth for what the counter, phone and bank queue show. */
 export function deriveCase(
   consent: boolean,

@@ -22,7 +22,12 @@ export function Timeline() {
   const items = [
     { icon: ReceiptText, label: "Requested", time: START },
     { icon: BellRing, label: "Contact notified", time: START },
-    { icon: Landmark, label: "Bank takes over", time: addMinutes(START, windowMinutes) },
+    {
+      icon: Landmark,
+      label: "Bank takes over",
+      // a contact's stop hands the case to the bank at once; otherwise after the window
+      time: view.state === "stopped_by_contact" ? START : addMinutes(START, windowMinutes),
+    },
   ];
 
   return (

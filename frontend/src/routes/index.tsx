@@ -34,13 +34,13 @@ function Stage() {
     { n: 2, label: "Counter: operation on hold", on: paused },
     {
       n: 3,
-      label: "Trusted contact decides",
+      label: "Trusted contact confirms or asks for a bank review",
       on: paused && ev?.destination === "trusted_contact",
     },
     {
       n: 4,
-      label: "Bank reviews conflicts",
-      on: paused && ev?.destination === "bank",
+      label: "Bank decides with the client",
+      on: paused && (ev?.destination === "bank" || view.state === "stopped_by_contact"),
     },
   ];
 
@@ -81,7 +81,7 @@ function Stage() {
           ))}
         </ol>
         <span className="sr-only" aria-live="polite">
-          Case status: {view.state.replace("_", " ")}
+          Case status: {view.state.replace(/_/g, " ")}
         </span>
       </section>
 

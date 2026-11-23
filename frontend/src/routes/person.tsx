@@ -124,7 +124,7 @@ function Person() {
             {[
               "Notified only for cash at the counter, safe deposit box visits and transfers to new or foreign accounts outside the normal pattern.",
               "Cannot see your balance or history, and cannot move money.",
-              "Can only confirm, or stop it and ask the bank to check: the bank decides with you.",
+              "Can only confirm, or stop it and ask the bank for a review: the bank decides with you, and you can always speak to the bank directly.",
               "If they have an interest in the transaction, the case goes to the bank.",
               `If they don't answer within ${windowMin} minutes, the bank takes over.`,
               `Switching off or changing the rules waits ${delayH} hours.`,

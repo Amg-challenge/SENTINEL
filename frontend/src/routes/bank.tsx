@@ -7,6 +7,7 @@ import { PageState } from "@/components/sentinel/PageState";
 import { Pill } from "@/components/sentinel/StatusPill";
 import { CHANNEL_LABEL, capitalise, formatChf, formatScore } from "@/lib/format";
 import { pageHead } from "@/lib/head";
+import { inBankQueue } from "@/state/case";
 import { useDemo } from "@/state/DemoContext";
 
 export const Route = createFileRoute("/bank")({
@@ -39,10 +40,7 @@ function Bank() {
   const rows = consent
     ? scenarios
         .map((s) => ({ s, ev: evaluations[s.id] }))
-        .filter(
-          ({ s, ev }) =>
-            ev?.paused && (ev.destination === "bank" || decisions[s.id] === "stopped"),
-        )
+        .filter(({ s, ev }) => inBankQueue(ev, decisions[s.id]))
     : [];
 
   return (
