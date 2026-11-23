@@ -153,9 +153,19 @@ def _sigmoid(x):
 
 
 def punteggia(df: pd.DataFrame, base: Baseline, pesi: dict | None = None) -> np.ndarray:
-    """Anomaly score in [0, 1] for every row of a DataFrame of operations (0 for card payments)."""
+    """Anomaly score in [0, 1] for every row of a DataFrame of operations (0 for card payments).
+
+    ONE customer at a time. Two signals are computed over the whole frame - the safe
+    deposit box and a cash withdrawal on the same DAY, and the POA holder's WEEKLY
+    total - so a pooled frame would let one customer's day raise another's score.
+    For a portfolio use economics.punteggia_portafoglio(), which loops per customer.
+    """
     if len(df) == 0:
         return np.array([], dtype=float)
+    if "cliente" in df.columns and df["cliente"].nunique() > 1:
+        raise ValueError(
+            "punteggia() scores one customer at a time: the same-day and weekly signals "
+            "would mix customers in a pooled frame. Use economics.punteggia_portafoglio().")
     p = {**PESI, **(pesi or {})}
     score = _sigmoid(p["bias"] + _contributi(df, base, p).sum(axis=1).to_numpy())
     return np.where(df["canale"].to_numpy() == "carta", 0.0, score)
